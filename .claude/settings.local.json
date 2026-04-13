@@ -10,10 +10,10 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/admin.html)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/index.html)",
       "Bash(curl -s -o /dev/null -w \" %{http_code}\" http://localhost:3000/admin.html)",
-
       "Skill(update-config)",
       "Skill(update-config:*)",
-      "Bash(python3 -c \"import json; d=json.load\\(open\\('/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/.claude/settings.json'\\)\\); print\\('OK:', d['hooks']['PostToolUse'][0]['hooks'][0]['command']\\)\")"
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/.claude/settings.json'\\)\\); print\\('OK:', d['hooks']['PostToolUse'][0]['hooks'][0]['command']\\)\")",
+      "Bash(lsof -t -i:3000)"
     ]
   }
 }
