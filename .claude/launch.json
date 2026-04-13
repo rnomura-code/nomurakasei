@@ -4,7 +4,8 @@
     {
       "name": "nomura-kasei",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["serve.py"],
+      "runtimeArgs": ["-m", "http.server", "3000"],
+      "cwd": "/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website",
       "port": 3000
     }
   ]
