@@ -1,0 +1,10 @@
+# Claude Code local settings (may contain tokens/secrets)
+.claude/settings.local.json
+.claude/launch.json
+
+# Python
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
