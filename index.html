@@ -1554,46 +1554,134 @@
       .hero-stats { display: block; }
       #hero { padding-bottom: 100px; }
     }
+
+    /* ===== TABLET / MOBILE BASE (≤1000px) ===== */
     @media (max-width: 1000px) {
-      .container { padding: 0 24px; }
-      .about-grid { grid-template-columns: 1fr; gap: 48px; }
-      .avm-badge { right: 0; bottom: -16px; }
+      .container, .container--wide { padding: 0 24px; }
+      /* セクション余白を削減 */
+      #about, #products, #gasket-solutions, #strengths,
+      #locations, #message, #history { padding: 80px 0; }
+      #news { padding: 80px 0; }
+      #story { padding: 80px 0 90px; }
+      /* About */
+      .about-grid { grid-template-columns: 1fr; gap: 56px; }
+      .avm-wrap { padding-bottom: 24px; } /* バッジ分の余白 */
+      .avm-badge { right: 0; bottom: -16px; padding: 16px 20px; }
+      .avm-badge .big { font-size: 30px; }
       .avm-float { width: 70%; }
+      /* Products */
       .products-grid { grid-template-columns: 1fr; }
       .product-item:nth-child(1) { grid-column: auto; }
       .product-img { aspect-ratio: 16/9 !important; }
       .product-multi--h2,
       .product-multi--1t2b,
       .product-multi--mosaic5 { aspect-ratio: 16/9 !important; }
+      .product-body { padding: 28px 28px; }
+      /* タッチデバイス：製品説明とタグを常時表示 */
+      .product-desc { opacity: 1; transform: none; }
+      .product-tags { opacity: 1; transform: none; }
+      /* Gasket solutions */
       .solutions-grid { grid-template-columns: 1fr; }
-      .gasket-cta { flex-direction: column; align-items: flex-start; }
+      .solution-card { padding: 36px 28px; }
+      .gasket-cta { flex-direction: column; align-items: flex-start; padding: 32px 28px; }
+      /* Strengths */
       .strengths-layout { grid-template-columns: 1fr; gap: 48px; }
       .strengths-left { position: static; }
+      .dual-axis { padding: 32px 28px; }
+      .dual-cols { grid-template-columns: 1fr; }
+      .dual-divider { transform: rotate(90deg); }
+      /* Locations */
+      .locations-grid { grid-template-columns: 1fr; }
+      .location-card { padding: 36px 28px; }
+      .location-card.hq { grid-column: auto; grid-template-columns: 1fr; padding: 36px 28px; }
+      /* Message */
       .message-layout { grid-template-columns: 1fr; }
       .president-photo-wrap { position: static; }
       .president-photo-wrap img { aspect-ratio: 4/3; }
-      .locations-grid { grid-template-columns: 1fr; }
-      .location-card.hq { grid-column: auto; grid-template-columns: 1fr; }
+      /* Footer */
       .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
-      .dual-axis { padding: 36px; }
-      .dual-cols { grid-template-columns: 1fr; }
-      .dual-divider { transform: rotate(90deg); }
+      /* Nav */
       .main-nav, .nav-contact { display: none; }
       .hamburger { display: flex; }
     }
+
+    /* ===== MOBILE (≤600px) ===== */
     @media (max-width: 600px) {
-      .footer-top { grid-template-columns: 1fr; }
-      .iso-inner { gap: 32px; }
-      .iso-div { display: none; }
-      .hero-title { font-size: 34px; }
+      /* コンテナ余白をさらに縮小 */
+      .container, .container--wide { padding: 0 16px; }
+      /* セクション余白 */
+      #about, #products, #gasket-solutions, #strengths,
+      #locations, #message, #history { padding: 60px 0; }
+      #news { padding: 60px 0; }
+      #story { padding: 60px 0 72px; }
+      .sec-head { margin-bottom: 36px; }
+      .sec-title { font-size: 24px; }
+      .sec-lead { font-size: 13px; margin-top: 14px; }
+      /* ヒーロー：nowrapを解除して折り返しOKに */
+      .hero-title { font-size: 30px; }
+      .hero-line1, .hero-line2 { white-space: normal; }
+      .hero-sub { font-size: 13px; }
+      .hero-sub-line { white-space: normal; }
+      .hero-actions { flex-direction: column; gap: 10px; }
+      .hero-actions .btn { width: 100%; justify-content: center; }
+      /* About */
+      .about-body { font-size: 14px; }
+      .about-grid { gap: 40px; }
+      .avm-badge { bottom: -12px; padding: 14px 18px; }
+      .avm-badge .big { font-size: 26px; }
+      .company-table th { width: 80px; font-size: 11px; }
+      .company-table td { font-size: 13px; }
+      /* Aboutの見出しにあるnowrapを解除 */
+      .sec-title span { white-space: normal !important; }
+      /* Products */
+      .product-body { padding: 20px 16px; }
+      .product-title { font-size: 17px; }
+      .product-desc { font-size: 12px; }
+      .product-tag { font-size: 9px; padding: 2px 7px; }
       /* モバイルは3列に絞る */
       .hero-col:nth-child(4),
       .hero-col:nth-child(5) { display: none; }
-      .tl-item { grid-template-columns: 72px 1fr; gap: 24px; }
-      .tl-content { padding-left: 28px; }
-      .timeline-wrap::before { left: 72px; }
-      .tl-year::after { right: -37px; }
-      .tl-item.milestone .tl-year::after { right: -38px; }
+      /* Gasket solutions */
+      .solution-card { padding: 28px 20px; }
+      .solution-title { font-size: 17px; }
+      .gasket-cta { padding: 24px 20px; }
+      .gasket-cta-text h3 { font-size: 16px; }
+      .gasket-cta-text p { font-size: 13px; }
+      /* Strengths */
+      .dual-axis { padding: 24px 16px; }
+      .dual-axis-title { font-size: 17px; }
+      .dual-col { padding: 20px 16px; }
+      /* Locations */
+      .location-card { padding: 28px 16px; }
+      .location-card.hq { padding: 28px 16px; }
+      .loc-name { font-size: 18px; }
+      /* Message */
+      .president-photo-wrap img { aspect-ratio: 3/2; }
+      .message-theme { font-size: 17px; padding-left: 16px; }
+      .message-body { font-size: 14px; }
+      .message-sig { flex-direction: column; gap: 4px; }
+      /* History / Timeline */
+      .tl-item { grid-template-columns: 60px 1fr; gap: 16px; }
+      .tl-content { padding-left: 20px; }
+      .timeline-wrap::before { left: 60px; }
+      .tl-year::after { right: -31px; }
+      .tl-item.milestone .tl-year::after { right: -32px; }
+      /* ISO */
+      .iso-inner { gap: 28px; }
+      .iso-div { display: none; }
+      .iso-icon { width: 44px; height: 44px; font-size: 18px; }
+      .iso-text .iso-num { font-size: 16px; }
+      /* News */
+      .news-item { grid-template-columns: 1fr auto; grid-template-rows: auto auto auto; gap: 6px 12px; }
+      .news-date { grid-column: 1; grid-row: 1; }
+      .news-cat { grid-column: 2; grid-row: 1; }
+      .news-title { grid-column: 1 / -1; grid-row: 2; font-size: 14px; }
+      .news-body { grid-column: 1 / -1; grid-row: 3; }
+      /* Footer */
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      footer { padding: 48px 0 28px; }
+      .footer-logo-img { height: 36px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
     }
   </style>
 </head>
