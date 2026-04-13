@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面 — ノムラ化成</title>
+  <link rel="icon" href="images/ノムラ化成様_ロゴマーク_CMYK.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue: #6B9BC4;
+      --blue-dk: #4A7BAA;
+      --navy: #1A3A5C;
+      --bg: #FAF6F1;
+      --border: #E8DDD3;
+      --mid: #66594E;
+      --white: #fff;
+      --dark: #1C130A;
+      --danger: #C0392B;
+      --font: 'M PLUS 1', 'Hiragino Kaku Gothic ProN', sans-serif;
+    }
+    body { font-family: var(--font); background: var(--bg); color: var(--dark); min-height: 100vh; }
+
+    /* ===== LOGIN ===== */
+    #login-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; background: var(--navy);
+    }
+    .login-box {
+      background: var(--white); border-radius: 12px;
+      padding: 48px 40px; width: 340px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    }
+    .login-logo { display: block; width: 180px; margin: 0 auto 32px; }
+    .login-title { text-align: center; font-size: 14px; color: var(--mid); margin-bottom: 28px; }
+    .login-field { margin-bottom: 16px; }
+    .login-field label { display: block; font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    .login-field input {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 6px; font-family: var(--font); font-size: 14px;
+      outline: none; transition: border-color .2s;
+    }
+    .login-field input:focus { border-color: var(--blue); }
+    .login-btn {
+      width: 100%; padding: 12px; background: var(--navy); color: var(--white);
+      border: none; border-radius: 6px; font-family: var(--font); font-size: 14px;
+      font-weight: 700; cursor: pointer; margin-top: 8px; transition: background .2s;
+    }
+    .login-btn:hover { background: var(--blue-dk); }
+    .login-error { color: var(--danger); font-size: 12px; margin-top: 10px; text-align: center; display: none; }
+
+    /* ===== ADMIN LAYOUT ===== */
+    #admin-screen { display: none; }
+    .admin-header {
+      background: var(--navy); color: var(--white);
+      padding: 0 32px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .admin-header-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .admin-header-title span { font-size: 12px; font-weight: 400; opacity: .6; }
+    .logout-btn {
+      padding: 6px 16px; background: transparent; border: 1px solid rgba(255,255,255,.3);
+      color: var(--white); border-radius: 4px; font-family: var(--font); font-size: 12px;
+      cursor: pointer; transition: background .2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,.1); }
+
+    .admin-body { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+    /* ===== FORM ===== */
+    .form-card {
+      background: var(--white); border-radius: 12px;
+      border: 1.5px solid var(--border); padding: 32px; margin-bottom: 40px;
+    }
+    .form-card h2 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 6px; font-family: var(--font); font-size: 14px;
+      outline: none; transition: border-color .2s; background: var(--white);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .form-actions { display: flex; gap: 12px; margin-top: 8px; }
+    .btn-primary {
+      padding: 10px 28px; background: var(--navy); color: var(--white);
+      border: none; border-radius: 6px; font-family: var(--font); font-size: 14px;
+      font-weight: 700; cursor: pointer; transition: background .2s;
+    }
+    .btn-primary:hover { background: var(--blue-dk); }
+    .btn-secondary {
+      padding: 10px 20px; background: var(--white); color: var(--mid);
+      border: 1.5px solid var(--border); border-radius: 6px; font-family: var(--font);
+      font-size: 14px; cursor: pointer; transition: background .2s;
+    }
+    .btn-secondary:hover { background: var(--bg); }
+    .form-hint { font-size: 11px; color: var(--mid); margin-top: 4px; }
+
+    /* ===== NEWS LIST ===== */
+    .list-card {
+      background: var(--white); border-radius: 12px;
+      border: 1.5px solid var(--border); overflow: hidden;
+    }
+    .list-header {
+      padding: 20px 28px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .list-header h2 { font-size: 16px; font-weight: 700; color: var(--navy); }
+    .list-count { font-size: 12px; color: var(--mid); }
+    .list-empty { padding: 48px; text-align: center; color: var(--mid); font-size: 14px; }
+    .news-row {
+      display: grid; grid-template-columns: 100px 80px 1fr auto;
+      grid-template-rows: auto auto;
+      gap: 0 16px; align-items: start;
+      padding: 16px 28px; border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    .news-row:last-child { border-bottom: none; }
+    .news-row:hover { background: #f7f3ee; }
+    .row-date { grid-column: 1; grid-row: 1; font-size: 12px; color: var(--mid); padding-top: 2px; }
+    .row-cat {
+      grid-column: 2; grid-row: 1;
+      display: inline-block; padding: 2px 8px; border-radius: 12px;
+      font-size: 11px; font-weight: 700;
+      background: #EBF3FA; color: var(--blue-dk); border: 1px solid #A8C5DF;
+      white-space: nowrap; text-align: center; align-self: start;
+    }
+    .row-cat.cat-important { background: #FFF3E0; color: #E65100; border-color: #FFCC80; }
+    .row-cat.cat-product { background: #E8F5E9; color: #2E7D32; border-color: #A5D6A7; }
+    .row-title { grid-column: 3; grid-row: 1; font-size: 14px; font-weight: 600; color: var(--dark); }
+    .row-body {
+      grid-column: 3; grid-row: 2;
+      font-size: 12px; color: var(--mid); margin-top: 4px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 460px;
+    }
+    .row-actions { grid-column: 4; grid-row: 1; display: flex; gap: 8px; align-self: start; }
+    .btn-edit, .btn-del {
+      padding: 5px 12px; border-radius: 4px; font-family: var(--font); font-size: 12px;
+      cursor: pointer; font-weight: 600; border: 1.5px solid; transition: background .15s;
+    }
+    .btn-edit { color: var(--blue-dk); border-color: var(--blue); background: transparent; }
+    .btn-edit:hover { background: #EBF3FA; }
+    .btn-del { color: var(--danger); border-color: #E57373; background: transparent; }
+    .btn-del:hover { background: #FFEBEE; }
+
+    .toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--navy); color: var(--white); padding: 12px 28px;
+      border-radius: 8px; font-size: 14px; font-weight: 600;
+      opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .news-row { grid-template-columns: 1fr auto; grid-template-rows: auto auto; }
+      .row-date { font-size: 11px; }
+      .row-cat { grid-column: 2; grid-row: 1; }
+      .row-title { grid-column: 1 / -1; }
+      .row-actions { grid-column: 1 / -1; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="login-screen">
+  <div class="login-box">
+    <img src="images/ノムラ化成様_組合せー横_RGB.png" alt="ノムラ化成" class="login-logo">
+    <div class="login-title">管理者ログイン</div>
+    <div class="login-field">
+      <label>パスワード</label>
+      <input type="password" id="pw-input" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">ログイン</button>
+    <div class="login-error" id="login-error">パスワードが正しくありません。</div>
+  </div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div id="admin-screen">
+  <header class="admin-header">
+    <div class="admin-header-title">
+      ノムラ化成
+      <span>管理画面 — お知らせ編集</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">ログアウト</button>
+  </header>
+
+  <main class="admin-body">
+
+    <!-- 追加・編集フォーム -->
+    <div class="form-card">
+      <h2 id="form-title">新規お知らせを追加</h2>
+      <input type="hidden" id="edit-id" value="">
+      <div class="form-row">
+        <div class="form-group">
+          <label>日付 <span style="color:red">*</span></label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="form-group">
+          <label>カテゴリー <span style="color:red">*</span></label>
+          <select id="f-category">
+            <option value="お知らせ">お知らせ</option>
+            <option value="重要">重要</option>
+            <option value="製品">製品</option>
+            <option value="採用">採用</option>
+            <option value="その他">その他</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>タイトル <span style="color:red">*</span></label>
+          <input type="text" id="f-title" placeholder="例：ISO更新審査を完了しました">
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>本文（任意）</label>
+          <textarea id="f-body" placeholder="お知らせの詳細内容を入力してください。改行もそのまま反映されます。" rows="5"></textarea>
+        </div>
+      </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>リンク先URL（任意）</label>
+          <input type="url" id="f-url" placeholder="https://...">
+          <p class="form-hint">入力した場合、タイトルがクリック可能なリンクになります。</p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="saveItem()">保存する</button>
+        <button class="btn-secondary" id="cancel-btn" onclick="cancelEdit()" style="display:none;">キャンセル</button>
+      </div>
+    </div>
+
+    <!-- 一覧 -->
+    <div class="list-card">
+      <div class="list-header">
+        <h2>登録済みお知らせ</h2>
+        <span class="list-count" id="list-count">0 件</span>
+      </div>
+      <div id="news-rows"></div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ===== パスワード設定 =====
+  // 変更する場合はこの文字列を書き換えてください
+  const ADMIN_PASSWORD = 'nomura2024';
+  const SESSION_KEY = 'nk_admin_session';
+  const NEWS_KEY = 'nk_news';
+
+  // ===== 初期化 =====
+  window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem(SESSION_KEY) === '1') {
+      showAdmin();
+    }
+    // 今日の日付をデフォルト表示
+    const today = new Date().toISOString().slice(0, 10);
+    document.getElementById('f-date').value = today;
+  });
+
+  // ===== ログイン =====
+  function doLogin() {
+    const pw = document.getElementById('pw-input').value;
+    if (pw === ADMIN_PASSWORD) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      document.getElementById('login-error').style.display = 'none';
+      showAdmin();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    document.getElementById('admin-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('pw-input').value = '';
+  }
+
+  function showAdmin() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    renderList();
+  }
+
+  // ===== データ操作 =====
+  function getNews() {
+    try { return JSON.parse(localStorage.getItem(NEWS_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function saveNews(arr) {
+    localStorage.setItem(NEWS_KEY, JSON.stringify(arr));
+  }
+
+  function saveItem() {
+    const dateRaw = document.getElementById('f-date').value;
+    const category = document.getElementById('f-category').value;
+    const title = document.getElementById('f-title').value.trim();
+    const body = document.getElementById('f-body').value.trim();
+    const url = document.getElementById('f-url').value.trim();
+    const editId = document.getElementById('edit-id').value;
+
+    if (!dateRaw || !title) {
+      showToast('日付とタイトルは必須です。');
+      return;
+    }
+
+    // 日付を YYYY.MM.DD 形式に変換
+    const date = dateRaw.replace(/-/g, '.').replace(/(\d{4})\.(\d{2})\.(\d{2})/, '$1.$2.$3');
+
+    const news = getNews();
+    if (editId) {
+      // 編集
+      const idx = news.findIndex(n => n.id === editId);
+      if (idx !== -1) {
+        news[idx] = { ...news[idx], date, category, title, body, url };
+        saveNews(news);
+        showToast('更新しました。');
+      }
+    } else {
+      // 新規
+      const item = {
+        id: Date.now().toString(),
+        date, category, title, body, url
+      };
+      news.unshift(item); // 先頭に追加（新しい順）
+      saveNews(news);
+      showToast('追加しました。');
+    }
+
+    resetForm();
+    renderList();
+  }
+
+  function editItem(id) {
+    const news = getNews();
+    const item = news.find(n => n.id === id);
+    if (!item) return;
+
+    document.getElementById('form-title').textContent = 'お知らせを編集';
+    document.getElementById('edit-id').value = item.id;
+    // YYYY.MM.DD → YYYY-MM-DD
+    document.getElementById('f-date').value = item.date.replace(/\./g, '-');
+    document.getElementById('f-category').value = item.category;
+    document.getElementById('f-title').value = item.title;
+    document.getElementById('f-body').value = item.body || '';
+    document.getElementById('f-url').value = item.url || '';
+    document.getElementById('cancel-btn').style.display = 'inline-block';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function deleteItem(id) {
+    if (!confirm('このお知らせを削除しますか？')) return;
+    const news = getNews().filter(n => n.id !== id);
+    saveNews(news);
+    showToast('削除しました。');
+    renderList();
+  }
+
+  function cancelEdit() {
+    resetForm();
+  }
+
+  function resetForm() {
+    document.getElementById('form-title').textContent = '新規お知らせを追加';
+    document.getElementById('edit-id').value = '';
+    const today = new Date().toISOString().slice(0, 10);
+    document.getElementById('f-date').value = today;
+    document.getElementById('f-category').value = 'お知らせ';
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-body').value = '';
+    document.getElementById('f-url').value = '';
+    document.getElementById('cancel-btn').style.display = 'none';
+  }
+
+  // ===== 一覧描画 =====
+  const catClass = { '重要': 'cat-important', '製品': 'cat-product' };
+
+  function renderList() {
+    const news = getNews();
+    const container = document.getElementById('news-rows');
+    document.getElementById('list-count').textContent = news.length + ' 件';
+
+    if (!news.length) {
+      container.innerHTML = '<div class="list-empty">まだお知らせがありません。上のフォームから追加してください。</div>';
+      return;
+    }
+
+    container.innerHTML = news.map(item => `
+      <div class="news-row">
+        <span class="row-date">${item.date}</span>
+        <span class="row-cat ${catClass[item.category] || ''}">${item.category}</span>
+        <span class="row-title">${escHtml(item.title)}${item.url ? ' <span style="font-size:11px;color:#999;margin-left:4px;">↗</span>' : ''}</span>
+        ${item.body ? `<span class="row-body">${escHtml(item.body.replace(/\n/g,' '))}</span>` : ''}
+        <div class="row-actions">
+          <button class="btn-edit" onclick="editItem('${item.id}')">編集</button>
+          <button class="btn-del" onclick="deleteItem('${item.id}')">削除</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ===== トースト =====
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>

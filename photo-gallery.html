@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>写真一覧 — ノムラ化成</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; margin: 0; padding: 24px; }
+    h1 { font-size: 20px; margin-bottom: 8px; color: #f26522; }
+    p { font-size: 13px; color: #aaa; margin-bottom: 24px; }
+    h2 { font-size: 14px; color: #ffd84d; margin: 32px 0 12px; border-bottom: 1px solid #333; padding-bottom: 6px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    .item {
+      background: #1a1a1a;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      border: 2px solid transparent;
+    }
+    .item:hover { transform: scale(1.04); box-shadow: 0 0 0 2px #f26522; }
+    .item img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+    .item .label {
+      font-size: 11px;
+      padding: 6px 8px;
+      color: #ccc;
+      background: #222;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* modal */
+    #modal {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.9);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    #modal.open { display: flex; }
+    #modal img { max-width: 90vw; max-height: 80vh; border-radius: 8px; }
+    #modal .fname {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #f26522;
+      font-weight: bold;
+    }
+    #modal .close {
+      position: absolute; top: 20px; right: 28px;
+      font-size: 32px; cursor: pointer; color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h1>写真素材一覧 — 株式会社ノムラ化成</h1>
+  <p>写真をクリックすると拡大表示。ファイル名をメモしてウェブサイトへの組み込みを依頼してください。</p>
+
+  <h2>ロゴ</h2>
+  <div class="grid" id="logos"></div>
+
+  <h2>KNT パンフレット（タイ工場）</h2>
+  <div class="grid" id="knt"></div>
+
+  <h2>写真素材（DSC_0001 〜）</h2>
+  <div class="grid" id="dsc"></div>
+
+  <div id="modal">
+    <span class="close" onclick="closeModal()">✕</span>
+    <img id="modalImg" src="" alt="">
+    <div class="fname" id="modalName"></div>
+  </div>
+
+  <script>
+    const logoFiles = [
+      "ノムラ化成様_ロゴマーク_CMYK.png",
+      "ノムラ化成様_ロゴマークのみ_RGB.png",
+      "ノムラ化成様_ロゴマークのみ_white.png",
+      "ノムラ化成様_ロゴマークのみ_Black.png",
+      "ノムラ化成様_組合せー横_RGB.png",
+      "ノムラ化成様_組合せー横_white.png",
+      "ノムラ化成様_組合せー横_Black.png",
+      "ノムラ化成様_組合せー横_CMYK.png",
+    ];
+
+    const kntFiles = Array.from({length: 12}, (_, i) =>
+      `KNT_Brouchore_JP_Page_${String(i+1).padStart(2,'0')}.jpg`
+    );
+
+    // DSC files: 001 to 353 + image_1
+    const dscFiles = [];
+    dscFiles.push("image_1.jpg");
+    for (let i = 1; i <= 353; i++) {
+      dscFiles.push(`DSC_${String(i).padStart(4,'0')}.jpg`);
+    }
+
+    function makeGrid(containerId, files) {
+      const container = document.getElementById(containerId);
+      files.forEach(f => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<img src="images/${f}" loading="lazy" onerror="this.closest('.item').style.display='none'">
+          <div class="label">${f}</div>`;
+        div.onclick = () => openModal(`images/${f}`, f);
+        container.appendChild(div);
+      });
+    }
+
+    makeGrid('logos', logoFiles);
+    makeGrid('knt', kntFiles);
+    makeGrid('dsc', dscFiles);
+
+    function openModal(src, name) {
+      document.getElementById('modalImg').src = src;
+      document.getElementById('modalName').textContent = name;
+      document.getElementById('modal').classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+    }
+    document.getElementById('modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('modal')) closeModal();
+    });
+  </script>
+</body>
+</html>
