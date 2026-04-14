@@ -198,6 +198,37 @@
     .nav-contact:hover { background: var(--blue-dk); }
     #header.scrolled .nav-contact { color: var(--white); }
 
+    /* dropdown nav */
+    .main-nav > ul > li { position: relative; }
+    .main-nav > ul > li > a { display: flex; align-items: center; gap: 4px; }
+    .nav-arrow { display: inline-block; width: 8px; height: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); margin-top: -2px; transition: transform .2s; }
+    .main-nav > ul > li:hover .nav-arrow { transform: rotate(-135deg); }
+    .nav-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 180px;
+      background: var(--white);
+      border-radius: 6px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      padding: 12px 0;
+      z-index: 950;
+    }
+    .main-nav > ul > li:hover .nav-dropdown { display: block; }
+    .nav-dropdown a {
+      display: block;
+      padding: 8px 24px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--body) !important;
+      white-space: nowrap;
+      transition: background .15s, color .15s;
+    }
+    .nav-dropdown a::after { display: none !important; }
+    .nav-dropdown a:hover { background: var(--blue-bg); color: var(--blue-dk) !important; }
+
     /* hamburger */
     .hamburger {
       display: none;
