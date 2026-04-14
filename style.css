@@ -1669,4 +1669,34 @@
       footer { padding: 48px 0 28px; }
       .footer-logo-img { height: 36px; }
       .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      /* Know More / Recruit */
+      #know-more [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
     }
+
+    /* ===== CONTACT FORM ===== */
+    .contact-section { padding: 120px 0; background: var(--bg); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .contact-info-block { padding: 32px; background: var(--white); border-radius: 2px; border: 1px solid var(--border); }
+    .contact-info-block h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+    .contact-info-block p { font-size: 14px; color: var(--mid); line-height: 1.8; }
+    .contact-info-block a { color: var(--blue-dk); font-weight: 600; }
+    .contact-form label { display: block; font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; margin-top: 20px; }
+    .contact-form label:first-child { margin-top: 0; }
+    .contact-form input, .contact-form select, .contact-form textarea {
+      width: 100%; padding: 12px 16px; font-size: 15px; font-family: var(--font);
+      border: 1px solid var(--border); border-radius: 2px; background: var(--white);
+      transition: border-color .2s;
+    }
+    .contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus {
+      outline: none; border-color: var(--blue);
+    }
+    .contact-form textarea { min-height: 160px; resize: vertical; }
+    .contact-form .form-submit { margin-top: 32px; }
+    @media (max-width: 1000px) { .contact-grid { grid-template-columns: 1fr; gap: 48px; } }
+
+    /* ===== SUB-PAGE HERO ===== */
+    .sub-hero { padding: 140px 0 60px; background: var(--warm-dk); }
+    .sub-hero .label-en { color: var(--blue-lt); }
+    .sub-hero .label-en::before { background: var(--blue-lt); }
+    .sub-hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; color: var(--white); margin-top: 14px; line-height: 1.2; word-break: keep-all; }
+    .sub-hero h1 em { font-style: normal; color: var(--blue); }
