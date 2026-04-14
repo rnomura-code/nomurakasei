@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>お問い合わせ | 株式会社ノムラ化成</title>
+  <meta name="description" content="株式会社ノムラ化成へのお問い合わせページです。製品に関するご質問、お見積もり依頼、採用についてなど、お気軽にご連絡ください。">
+  <link rel="icon" href="images/ノムラ化成様_ロゴマーク_CMYK.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header id="header" class="scrolled">
+  <div class="container">
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="images/ノムラ化成様_組合せー横_white.png" alt="株式会社ノムラ化成" class="logo-img logo-img-white">
+        <img src="images/ノムラ化成様_組合せー横_RGB.png" alt="株式会社ノムラ化成" class="logo-img logo-img-dark">
+      </a>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html#about">会社概要</a></li>
+          <li><a href="index.html#products">製品情報</a></li>
+          <li><a href="index.html#gasket-solutions">ドアガスケット</a></li>
+          <li><a href="index.html#strengths">強み</a></li>
+          <li><a href="index.html#locations">拠点情報</a></li>
+          <li><a href="index.html#message">社長メッセージ</a></li>
+          <li><a href="index.html#news">お知らせ</a></li>
+          <li><a href="index.html#history">沿革</a></li>
+        </ul>
+      </nav>
+      <a href="contact.html" class="nav-contact">お問い合わせはこちら</a>
+      <div class="hamburger" onclick="openMobileNav()" aria-label="メニュー">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <span class="mobile-close" onclick="closeMobileNav()">✕</span>
+  <a href="index.html#about" onclick="closeMobileNav()">会社概要</a>
+  <a href="index.html#products" onclick="closeMobileNav()">製品情報</a>
+  <a href="index.html#gasket-solutions" onclick="closeMobileNav()">ドアガスケット</a>
+  <a href="index.html#strengths" onclick="closeMobileNav()">強み</a>
+  <a href="index.html#locations" onclick="closeMobileNav()">拠点情報</a>
+  <a href="index.html#message" onclick="closeMobileNav()">社長メッセージ</a>
+  <a href="index.html#news" onclick="closeMobileNav()">お知らせ</a>
+  <a href="index.html#history" onclick="closeMobileNav()">沿革</a>
+  <a href="contact.html" onclick="closeMobileNav()" style="color:var(--blue);">お問い合わせ</a>
+</div>
+
+<!-- ===== SUB HERO ===== -->
+<section class="sub-hero">
+  <div class="container">
+    <span class="label-en">Contact</span>
+    <h1>お問い合わせ</h1>
+  </div>
+</section>
+
+<!-- ===== CONTACT SECTION ===== -->
+<section class="contact-section">
+  <div class="container">
+    <!-- Thank you message (hidden by default) -->
+    <div id="thankYouMessage" style="display:none; background:var(--blue); color:#fff; padding:24px 32px; border-radius:12px; margin-bottom:40px; text-align:center;">
+      <p style="font-size:1.2rem; font-weight:600; margin-bottom:8px;">お問い合わせありがとうございます。</p>
+      <p>内容を確認の上、担当者よりご連絡いたします。</p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- LEFT: Form -->
+      <div class="contact-form">
+        <form action="https://formsubmit.co/info@nomura-kasei.co.jp" method="POST">
+          <input type="hidden" name="_subject" value="【ノムラ化成HP】お問い合わせ">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="https://rnomura-code.github.io/nomurakasei/contact.html?sent=1">
+
+          <div class="form-group">
+            <label for="name">お名前 <span class="required">*</span></label>
+            <input type="text" id="name" name="name" required placeholder="山田 太郎">
+          </div>
+
+          <div class="form-group">
+            <label for="company">会社名</label>
+            <input type="text" id="company" name="company" placeholder="株式会社○○">
+          </div>
+
+          <div class="form-group">
+            <label for="email">メールアドレス <span class="required">*</span></label>
+            <input type="email" id="email" name="email" required placeholder="example@company.co.jp">
+          </div>
+
+          <div class="form-group">
+            <label for="tel">電話番号</label>
+            <input type="tel" id="tel" name="tel" placeholder="048-000-0000">
+          </div>
+
+          <div class="form-group">
+            <label for="category">お問い合わせ種別</label>
+            <select id="category" name="category">
+              <option value="">選択してください</option>
+              <option value="製品について">製品について</option>
+              <option value="見積もり依頼">見積もり依頼</option>
+              <option value="採用について">採用について</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="message">お問い合わせ内容 <span class="required">*</span></label>
+            <textarea id="message" name="message" required rows="6" placeholder="お問い合わせ内容をご記入ください"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--primary form-submit">送信する</button>
+        </form>
+      </div>
+
+      <!-- RIGHT: Contact Info -->
+      <div class="contact-info">
+        <div class="contact-info-block">
+          <h3>お電話でのお問い合わせ</h3>
+          <a href="tel:048-794-4352" class="contact-phone">048-794-4352</a>
+          <p class="contact-hours">平日 8:30 - 17:30</p>
+        </div>
+        <div class="contact-info-block">
+          <h3>本社所在地</h3>
+          <address>
+            〒339-0002<br>
+            埼玉県さいたま市岩槻区<br>
+            裏慈恩寺新房 222
+          </address>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="images/ノムラ化成様_組合せー横_white.png" alt="株式会社ノムラ化成" class="footer-logo-img">
+        <p>1968年の創業以来、押出成形技術で社会に貢献。日本とタイの二軸体制で、あらゆる製造ニーズにお応えします。</p>
+        <a href="story.html" class="footer-story-link">
+          <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M8 5v4M8 11v.5"/></svg>
+          採用・会社のストーリーを読む
+        </a>
+      </div>
+      <div class="footer-col">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html#about">会社概要</a></li>
+          <li><a href="index.html#products">製品情報</a></li>
+          <li><a href="index.html#gasket-solutions">ドアガスケット</a></li>
+          <li><a href="index.html#strengths">強み</a></li>
+          <li><a href="index.html#locations">拠点情報</a></li>
+          <li><a href="index.html#message">社長メッセージ</a></li>
+          <li><a href="index.html#news">お知らせ</a></li>
+          <li><a href="index.html#history">沿革</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Products</h4>
+        <ul>
+          <li><a href="index.html#products">ドアガスケット</a></li>
+          <li><a href="index.html#products">感圧スイッチ</a></li>
+          <li><a href="index.html#products">異型押出製品</a></li>
+          <li><a href="index.html#products">オリジナル製品</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <address>
+          〒339-0002<br>
+          埼玉県さいたま市岩槻区<br>
+          裏慈恩寺新房 222<br>
+          <strong>TEL: 048-794-4352</strong>
+        </address>
+      </div>
+      <div class="footer-col">
+        <h4>Related</h4>
+        <ul>
+          <li><a href="https://www.kunomura.com" target="_blank" rel="noopener noreferrer">タイ工場 kunomura.com ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 株式会社ノムラ化成. All Rights Reserved.</p>
+      <p>Est. 1968</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ===== Mobile nav =====
+  function openMobileNav() {
+    document.getElementById('mobileNav').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileNav() {
+    document.getElementById('mobileNav').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ===== URL params: preset select & thank you message =====
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+
+    // If ?subject=recruit, preset the category select to 採用について
+    if (params.get('subject') === 'recruit') {
+      const sel = document.getElementById('category');
+      if (sel) sel.value = '採用について';
+    }
+
+    // If ?sent=1, show thank you message
+    if (params.get('sent') === '1') {
+      const msg = document.getElementById('thankYouMessage');
+      if (msg) msg.style.display = 'block';
+    }
+  })();
+</script>
+</body>
+</html>
