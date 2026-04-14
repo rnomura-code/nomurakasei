@@ -1700,3 +1700,27 @@
     .sub-hero .label-en::before { background: var(--blue-lt); }
     .sub-hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; color: var(--white); margin-top: 14px; line-height: 1.2; word-break: keep-all; }
     .sub-hero h1 em { font-style: normal; color: var(--blue); }
+
+    /* ===== TOP PAGE SUMMARY SECTIONS ===== */
+    .top-summary { padding: 100px 0; }
+    .top-summary-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .top-summary-text p {
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.9;
+      margin-top: 16px;
+    }
+    @media (max-width: 1000px) {
+      .top-summary { padding: 80px 0; }
+      .top-summary-inner { grid-template-columns: 1fr; gap: 32px; }
+      .top-locations-grid { grid-template-columns: 1fr 1fr !important; }
+    }
+    @media (max-width: 600px) {
+      .top-summary { padding: 60px 0; }
+      .top-locations-grid { grid-template-columns: 1fr !important; }
+    }
