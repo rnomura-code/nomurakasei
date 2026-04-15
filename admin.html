@@ -434,6 +434,15 @@
     document.getElementById('f-url').value = item.url || '';
     document.getElementById('cancel-btn').style.display = 'inline-block';
 
+    // 画像の復元
+    _pendingImage = null;
+    _currentImage = item.image || null;
+    if (_currentImage) {
+      showImagePreview(_currentImage);
+    } else {
+      removeImage();
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
