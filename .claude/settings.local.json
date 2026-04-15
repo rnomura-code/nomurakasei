@@ -14,7 +14,10 @@
       "Skill(update-config:*)",
       "Bash(python3 -c \"import json; d=json.load\\(open\\('/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/.claude/settings.json'\\)\\); print\\('OK:', d['hooks']['PostToolUse'][0]['hooks'][0]['command']\\)\")",
       "Bash(lsof -t -i:3000)",
-      "Bash(ls -la \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/\"*.html)"
+      "Bash(ls -la \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/\"*.html)",
+      "Bash(pkill -f \"npx serve\")",
+      "Bash(npx serve:*)",
+      "Bash(xargs kill:*)"
     ]
   }
 }
