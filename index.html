@@ -515,14 +515,17 @@
     const catClass = { '重要': 'cat-important', '製品': 'cat-product', 'お知らせ': '', '採用': '', 'その他': '' };
     function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
     container.innerHTML = items.map(item => `
-      <div class="news-item">
-        <span class="news-date">${esc(item.date)}</span>
-        <span class="news-cat ${catClass[item.category] || ''}">${esc(item.category)}</span>
-        <span class="news-title">${item.url
-          ? `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a>`
-          : esc(item.title)
-        }</span>
-        ${item.body ? `<p class="news-body">${esc(item.body)}</p>` : ''}
+      <div class="news-item${item.image ? ' news-item--has-img' : ''}">
+        <div class="news-item-main">
+          <span class="news-date">${esc(item.date)}</span>
+          <span class="news-cat ${catClass[item.category] || ''}">${esc(item.category)}</span>
+          <span class="news-title">${item.url
+            ? `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a>`
+            : esc(item.title)
+          }</span>
+          ${item.body ? `<p class="news-body">${esc(item.body)}</p>` : ''}
+        </div>
+        ${item.image ? `<img class="news-item-img" src="${item.image}" alt="${esc(item.title)}">` : ''}
       </div>`).join('');
   })();
 </script>
