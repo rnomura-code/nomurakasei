@@ -1555,15 +1555,23 @@
       display: flex; align-items: center; gap: 8px;
     }
 
-    /* フッターからの控えめリンク */
+    /* フッター ストーリーリンク（ブロック） */
     .footer-story-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      color: rgba(255,255,255,.38); font-size: 12px;
-      text-decoration: none; border-bottom: 1px solid transparent;
-      transition: color .2s, border-color .2s;
-      margin-top: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 20px;
+      padding: 11px 18px;
+      background: rgba(200,169,110,.10);
+      border: 1px solid rgba(200,169,110,.30);
+      border-radius: 8px;
+      font-size: 13px; font-weight: 700; color: #c8a96e;
+      text-decoration: none;
+      transition: background .2s, border-color .2s;
     }
-    .footer-story-link:hover { color: #c8a96e; border-bottom-color: #c8a96e; }
+    .footer-story-link:hover {
+      background: rgba(200,169,110,.20);
+      border-color: rgba(200,169,110,.55);
+      color: #c8a96e;
+    }
 
     @media (max-width: 768px) {
       .story-block { grid-template-columns: 1fr; gap: 8px 0; }
