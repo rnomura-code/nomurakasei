@@ -346,6 +346,36 @@
     localStorage.setItem(NEWS_KEY, JSON.stringify(arr));
   }
 
+  // ===== 画像処理 =====
+  let _pendingImage = null; // 新規選択された画像のbase64
+  let _currentImage = null; // 編集中のアイテムが持つ既存画像
+
+  function handleImageUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      _pendingImage = e.target.result;
+      showImagePreview(_pendingImage);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function showImagePreview(src) {
+    document.getElementById('img-upload-label').style.display = 'none';
+    const wrap = document.getElementById('img-preview-wrap');
+    document.getElementById('img-preview').src = src;
+    wrap.style.display = 'inline-block';
+  }
+
+  function removeImage() {
+    _pendingImage = null;
+    _currentImage = null;
+    document.getElementById('f-image').value = '';
+    document.getElementById('img-preview-wrap').style.display = 'none';
+    document.getElementById('img-upload-label').style.display = '';
+  }
+
   function saveItem() {
     const dateRaw = document.getElementById('f-date').value;
     const category = document.getElementById('f-category').value;
@@ -362,12 +392,15 @@
     // 日付を YYYY.MM.DD 形式に変換
     const date = dateRaw.replace(/-/g, '.').replace(/(\d{4})\.(\d{2})\.(\d{2})/, '$1.$2.$3');
 
+    // 画像：新しく選択 > 既存維持 > なし
+    const image = _pendingImage || _currentImage || '';
+
     const news = getNews();
     if (editId) {
       // 編集
       const idx = news.findIndex(n => n.id === editId);
       if (idx !== -1) {
-        news[idx] = { ...news[idx], date, category, title, body, url };
+        news[idx] = { ...news[idx], date, category, title, body, url, image };
         saveNews(news);
         showToast('更新しました。');
       }
@@ -375,9 +408,9 @@
       // 新規
       const item = {
         id: Date.now().toString(),
-        date, category, title, body, url
+        date, category, title, body, url, image
       };
-      news.unshift(item); // 先頭に追加（新しい順）
+      news.unshift(item);
       saveNews(news);
       showToast('追加しました。');
     }
