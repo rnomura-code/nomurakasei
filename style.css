@@ -1501,11 +1501,11 @@
     }
     .story-block--after .story-block-title { color: #d4f5ee; }
 
-    /* 笑顔写真グリッド */
+    /* 笑顔写真グリッド（4枚） */
     .story-photos {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      grid-template-rows: 180px 150px;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: 200px 170px;
       gap: 8px;
       margin-top: 24px;
       border-radius: 10px;
@@ -1519,10 +1519,9 @@
     }
     .story-photos img:hover { transform: scale(1.04); }
     .story-photos img:nth-child(1) { grid-column: span 3; }
-    .story-photos img:nth-child(2) { grid-column: span 3; }
+    .story-photos img:nth-child(2) { grid-column: span 1; }
     .story-photos img:nth-child(3) { grid-column: span 2; }
     .story-photos img:nth-child(4) { grid-column: span 2; }
-    .story-photos img:nth-child(5) { grid-column: span 2; }
 
     /* ブロック間の矢印ブリッジ */
     .story-bridge {
