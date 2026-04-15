@@ -1453,6 +1453,25 @@
     }
     .story-cta-btn:hover { background: #dbbe88; }
 
+    /* Wantedly リンク */
+    .story-wantedly {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin-top: 20px;
+      padding: 14px 20px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 8px;
+      font-size: 13px; color: rgba(255,255,255,.48);
+    }
+    .story-wantedly svg { flex-shrink: 0; opacity: .5; }
+    .story-wantedly-link {
+      color: #4dc4a8; font-weight: 700; font-size: 13px;
+      text-decoration: none; border-bottom: 1px solid rgba(77,196,168,.35);
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+    .story-wantedly-link:hover { color: #7dd8c4; border-bottom-color: #7dd8c4; }
+
     /* ストーリー リスト */
     .story-list {
       list-style: none;
