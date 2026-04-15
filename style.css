@@ -1553,13 +1553,12 @@
       .story-block--after { padding: 20px !important; }
       .story-photos {
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: 120px 120px 120px;
+        grid-template-rows: 130px 130px;
       }
       .story-photos img:nth-child(1),
       .story-photos img:nth-child(2),
       .story-photos img:nth-child(3),
-      .story-photos img:nth-child(4),
-      .story-photos img:nth-child(5) { grid-column: span 1; }
+      .story-photos img:nth-child(4) { grid-column: span 1; }
       .story-photos img:nth-child(1) { grid-column: span 2; }
     }
 
