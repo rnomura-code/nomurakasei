@@ -1551,6 +1551,17 @@
       .story-block { grid-template-columns: 1fr; gap: 8px 0; }
       .story-block-num { padding-top: 0; }
       .story-cta { flex-direction: column; padding: 28px 24px; }
+      .story-block--after { padding: 20px !important; }
+      .story-photos {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: 120px 120px 120px;
+      }
+      .story-photos img:nth-child(1),
+      .story-photos img:nth-child(2),
+      .story-photos img:nth-child(3),
+      .story-photos img:nth-child(4),
+      .story-photos img:nth-child(5) { grid-column: span 1; }
+      .story-photos img:nth-child(1) { grid-column: span 2; }
     }
 
     /* ===== FOOTER ===== */
