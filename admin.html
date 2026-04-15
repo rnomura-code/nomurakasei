@@ -488,12 +488,13 @@
       <div class="news-row">
         <span class="row-date">${item.date}</span>
         <span class="row-cat ${catClass[item.category] || ''}">${item.category}</span>
-        <span class="row-title">${escHtml(item.title)}${item.url ? ' <span style="font-size:11px;color:#999;margin-left:4px;">↗</span>' : ''}</span>
+        <span class="row-title">${escHtml(item.title)}${item.url ? ' <span style="font-size:11px;color:#999;margin-left:4px;">↗</span>' : ''}${item.image ? ' <span style="font-size:11px;color:#4A7BAA;margin-left:4px;">🖼</span>' : ''}</span>
         ${item.body ? `<span class="row-body">${escHtml(item.body.replace(/\n/g,' '))}</span>` : ''}
         <div class="row-actions">
           <button class="btn-edit" onclick="editItem('${item.id}')">編集</button>
           <button class="btn-del" onclick="deleteItem('${item.id}')">削除</button>
         </div>
+        ${item.image ? `<div class="row-thumb"><img src="${item.image}" alt=""></div>` : ''}
       </div>
     `).join('');
   }
