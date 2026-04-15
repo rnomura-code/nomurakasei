@@ -257,6 +257,23 @@
           <p class="form-hint">入力した場合、タイトルがクリック可能なリンクになります。</p>
         </div>
       </div>
+      <div class="form-row full">
+        <div class="form-group">
+          <label>画像（任意）</label>
+          <div class="img-upload-area" id="img-upload-area">
+            <input type="file" id="f-image" accept="image/*" onchange="handleImageUpload(this)">
+            <div class="img-upload-label" id="img-upload-label">
+              <strong>クリックまたはドラッグして画像を選択</strong>
+              JPG・PNG・GIF・WebP対応
+            </div>
+          </div>
+          <div class="img-preview-wrap" id="img-preview-wrap" style="display:none;">
+            <img id="img-preview" src="" alt="プレビュー">
+            <button class="img-remove-btn" onclick="removeImage()" title="画像を削除">×</button>
+          </div>
+          <p class="form-hint" style="margin-top:8px;">お知らせに添付される画像です。推奨サイズ：横1200px以下。</p>
+        </div>
+      </div>
       <div class="form-actions">
         <button class="btn-primary" onclick="saveItem()">保存する</button>
         <button class="btn-secondary" id="cancel-btn" onclick="cancelEdit()" style="display:none;">キャンセル</button>
