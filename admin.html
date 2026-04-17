@@ -304,18 +304,45 @@
       <div class="form-row full">
         <div class="form-group">
           <label>画像（任意）</label>
-          <div class="img-upload-area" id="img-upload-area">
-            <input type="file" id="f-image" accept="image/*" onchange="handleImageUpload(this)">
-            <div class="img-upload-label" id="img-upload-label">
-              <strong>クリックまたはドラッグして画像を選択</strong>
-              JPG・PNG・GIF・WebP対応
-            </div>
-          </div>
+          <label class="img-upload-trigger" id="img-upload-trigger" for="f-image">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <strong>クリックまたはドラッグして画像を選択</strong>
+            <span>JPG・PNG・GIF・WebP対応 / 推奨サイズ：横1200px以下</span>
+          </label>
+          <input type="file" id="f-image" accept="image/*" style="display:none">
+          <div class="img-error" id="img-error" style="display:none"></div>
+          <div class="img-warning" id="img-warning" style="display:none"></div>
           <div class="img-preview-wrap" id="img-preview-wrap" style="display:none;">
+            <div class="img-preview-header">
+              <span id="img-preview-info"></span>
+              <div class="img-preview-header-btns">
+                <button class="img-action-btn img-action-btn--edit" type="button" onclick="openEditor()">トリム・リサイズ</button>
+                <button class="img-action-btn img-action-btn--del" type="button" onclick="removeImage()">削除</button>
+              </div>
+            </div>
             <img id="img-preview" src="" alt="プレビュー">
-            <button class="img-remove-btn" onclick="removeImage()" title="画像を削除">×</button>
           </div>
-          <p class="form-hint" style="margin-top:8px;">お知らせに添付される画像です。推奨サイズ：横1200px以下。</p>
+          <div class="img-editor" id="img-editor" style="display:none;">
+            <div class="img-editor-header">
+              <span>トリム・リサイズ</span>
+              <div class="img-editor-header-btns">
+                <button class="img-editor-apply" type="button" onclick="applyImageEdit()">適用</button>
+                <button class="img-editor-cancel" type="button" onclick="cancelImageEdit()">キャンセル</button>
+              </div>
+            </div>
+            <div class="img-editor-body">
+              <div class="img-editor-canvas-wrap" id="img-canvas-wrap">
+                <canvas id="img-crop-canvas"></canvas>
+              </div>
+            </div>
+            <div class="img-editor-controls">
+              <label>出力サイズ</label>
+              <input type="range" id="img-resize-slider" min="10" max="100" value="100">
+              <span class="img-editor-size" id="img-editor-size">— × — px</span>
+              <button class="crop-reset-btn" type="button" onclick="resetCrop()">クロップをリセット</button>
+            </div>
+            <div class="img-editor-hint">ドラッグしてクロップ範囲を選択 / スライダーで出力サイズを調整</div>
+          </div>
         </div>
       </div>
       <div class="form-actions">
