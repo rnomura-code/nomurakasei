@@ -549,11 +549,12 @@
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
-  function closeNewsModal(e) {
-    if (e && e.target !== document.getElementById('newsModalOverlay') && e.type !== 'click') return;
-    if (e && e.currentTarget === document.getElementById('newsModalOverlay') && e.target !== e.currentTarget) return;
+  function closeNewsModal() {
     document.getElementById('newsModalOverlay').classList.remove('open');
     document.body.style.overflow = '';
+  }
+  function handleModalOverlayClick(e) {
+    if (e.target === e.currentTarget) closeNewsModal();
   }
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeNewsModal(); });
 </script>
