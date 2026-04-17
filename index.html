@@ -506,28 +506,77 @@
   revealEls.forEach(el => revealObs.observe(el));
 
   // ===== News (localStorage) =====
+  let _newsItems = [];
   (function renderNews() {
     const container = document.getElementById('news-list');
     if (!container) return;
-    let items = [];
-    try { items = JSON.parse(localStorage.getItem('nk_news') || '[]'); } catch(e) {}
-    if (!items.length) return; // keep empty message
+    try { _newsItems = JSON.parse(localStorage.getItem('nk_news') || '[]'); } catch(e) {}
+    if (!_newsItems.length) return;
     const catClass = { '重要': 'cat-important', '製品': 'cat-product', 'お知らせ': '', '採用': '', 'その他': '' };
     function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-    container.innerHTML = items.map(item => `
-      <div class="news-item${item.image ? ' news-item--has-img' : ''}">
+    container.innerHTML = _newsItems.map((item, i) => `
+      <div class="news-item news-item--clickable${item.image ? ' news-item--has-img' : ''}" onclick="openNewsModal(${i})">
         <div class="news-item-main">
           <span class="news-date">${esc(item.date)}</span>
           <span class="news-cat ${catClass[item.category] || ''}">${esc(item.category)}</span>
-          <span class="news-title">${item.url
-            ? `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.title)}</a>`
-            : esc(item.title)
-          }</span>
+          <span class="news-title">${esc(item.title)}</span>
           ${item.body ? `<p class="news-body">${esc(item.body)}</p>` : ''}
         </div>
         ${item.image ? `<img class="news-item-img" src="${item.image}" alt="${esc(item.title)}">` : ''}
       </div>`).join('');
   })();
+
+  // ===== News Modal =====
+  const catClass = { '重要': 'cat-important', '製品': 'cat-product' };
+  function openNewsModal(i) {
+    const item = _newsItems[i];
+    if (!item) return;
+    document.getElementById('modal-date').textContent = item.date;
+    const catEl = document.getElementById('modal-cat');
+    catEl.textContent = item.category;
+    catEl.className = 'news-cat ' + (catClass[item.category] || '');
+    document.getElementById('modal-title').textContent = item.title;
+    const imgEl = document.getElementById('modal-img');
+    if (item.image) { imgEl.src = item.image; imgEl.alt = item.title; imgEl.style.display = 'block'; }
+    else { imgEl.style.display = 'none'; }
+    const textEl = document.getElementById('modal-text');
+    textEl.textContent = item.body || '';
+    textEl.style.display = item.body ? 'block' : 'none';
+    const linkEl = document.getElementById('modal-link');
+    if (item.url) { linkEl.href = item.url; linkEl.style.display = 'inline-flex'; }
+    else { linkEl.style.display = 'none'; }
+    const overlay = document.getElementById('newsModalOverlay');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeNewsModal(e) {
+    if (e && e.target !== document.getElementById('newsModalOverlay') && e.type !== 'click') return;
+    if (e && e.currentTarget === document.getElementById('newsModalOverlay') && e.target !== e.currentTarget) return;
+    document.getElementById('newsModalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeNewsModal(); });
 </script>
+
+<!-- ===== NEWS DETAIL MODAL ===== -->
+<div class="news-modal-overlay" id="newsModalOverlay" onclick="handleModalOverlayClick(event)">
+  <div class="news-modal" role="dialog" aria-modal="true">
+    <div class="news-modal-header">
+      <div class="news-modal-meta">
+        <span class="news-modal-date" id="modal-date"></span>
+        <span class="news-cat" id="modal-cat"></span>
+      </div>
+      <button class="news-modal-close" onclick="closeNewsModal()" aria-label="閉じる">✕</button>
+    </div>
+    <div class="news-modal-body">
+      <h2 class="news-modal-title" id="modal-title"></h2>
+      <img class="news-modal-img" id="modal-img" src="" alt="" style="display:none;">
+      <p class="news-modal-text" id="modal-text"></p>
+      <a class="news-modal-link" id="modal-link" href="" target="_blank" rel="noopener noreferrer" style="display:none;">
+        詳細を見る <span>↗</span>
+      </a>
+    </div>
+  </div>
+</div>
 </body>
 </html>
