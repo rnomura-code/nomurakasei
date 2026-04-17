@@ -418,33 +418,188 @@
   }
 
   // ===== 画像処理 =====
-  let _pendingImage = null; // 新規選択された画像のbase64
-  let _currentImage = null; // 編集中のアイテムが持つ既存画像
+  let _pendingImage = null;
+  let _currentImage = null;
+  let _origImage = null;
 
-  function handleImageUpload(input) {
-    const file = input.files[0];
-    if (!file) return;
+  // Crop editor state
+  let _editorImg = null, _editorCanvas = null, _editorCtx = null;
+  let _displayW = 0, _displayH = 0, _natW = 0, _natH = 0, _imgScale = 1;
+  let _cropStart = null, _cropRect = null, _isDragging = false;
+
+  // File input change
+  document.getElementById('f-image').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) processImageFile(file);
+  });
+
+  // Drag and drop on trigger
+  (function() {
+    const trigger = document.getElementById('img-upload-trigger');
+    trigger.addEventListener('dragover', (e) => { e.preventDefault(); trigger.classList.add('drag-over'); });
+    trigger.addEventListener('dragleave', () => trigger.classList.remove('drag-over'));
+    trigger.addEventListener('drop', (e) => {
+      e.preventDefault();
+      trigger.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImageFile(file);
+    });
+  })();
+
+  function processImageFile(file) {
+    hideImgMessages();
+    const sizeMB = file.size / 1024 / 1024;
+    if (sizeMB > 5) {
+      showImgError(`ファイルサイズが大きすぎます（${sizeMB.toFixed(1)}MB）。5MB以下の画像を選択してください。`);
+      document.getElementById('f-image').value = '';
+      return;
+    }
     const reader = new FileReader();
     reader.onload = function(e) {
+      _origImage = e.target.result;
       _pendingImage = e.target.result;
-      showImagePreview(_pendingImage);
+      if (sizeMB > 2) {
+        showImgWarning(`ファイルサイズが大きいです（${sizeMB.toFixed(1)}MB）。「トリム・リサイズ」で縮小することをお勧めします。`);
+      }
+      showImagePreview(_pendingImage, file.name, file.size);
     };
     reader.readAsDataURL(file);
   }
 
-  function showImagePreview(src) {
-    document.getElementById('img-upload-label').style.display = 'none';
-    const wrap = document.getElementById('img-preview-wrap');
+  function hideImgMessages() {
+    document.getElementById('img-error').style.display = 'none';
+    document.getElementById('img-warning').style.display = 'none';
+  }
+  function showImgError(msg) {
+    const el = document.getElementById('img-error');
+    el.textContent = msg; el.style.display = 'block';
+  }
+  function showImgWarning(msg) {
+    const el = document.getElementById('img-warning');
+    el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+  }
+
+  function showImagePreview(src, filename, size) {
+    document.getElementById('img-upload-trigger').style.display = 'none';
     document.getElementById('img-preview').src = src;
-    wrap.style.display = 'inline-block';
+    const info = document.getElementById('img-preview-info');
+    info.textContent = (filename && size) ? `${filename} (${(size/1024/1024).toFixed(2)}MB)` : '';
+    document.getElementById('img-preview-wrap').style.display = 'block';
   }
 
   function removeImage() {
-    _pendingImage = null;
-    _currentImage = null;
+    _pendingImage = null; _currentImage = null; _origImage = null;
     document.getElementById('f-image').value = '';
     document.getElementById('img-preview-wrap').style.display = 'none';
-    document.getElementById('img-upload-label').style.display = '';
+    document.getElementById('img-editor').style.display = 'none';
+    document.getElementById('img-upload-trigger').style.display = 'flex';
+    hideImgMessages();
+  }
+
+  // ===== Crop/Resize Editor =====
+  function openEditor() {
+    const src = _pendingImage || _currentImage;
+    if (!src) return;
+    const editor = document.getElementById('img-editor');
+    editor.style.display = 'block';
+    _editorCanvas = document.getElementById('img-crop-canvas');
+    _editorCtx = _editorCanvas.getContext('2d');
+    _cropRect = null; _cropStart = null; _isDragging = false;
+    _editorImg = new Image();
+    _editorImg.onload = function() {
+      _natW = _editorImg.naturalWidth; _natH = _editorImg.naturalHeight;
+      const maxW = Math.min(680, document.getElementById('img-canvas-wrap').clientWidth - 4);
+      _imgScale = Math.min(1, maxW / _natW);
+      _displayW = Math.round(_natW * _imgScale);
+      _displayH = Math.round(_natH * _imgScale);
+      _editorCanvas.width = _displayW; _editorCanvas.height = _displayH;
+      document.getElementById('img-resize-slider').value = 100;
+      updateEditorSize(); drawEditorCanvas();
+      editor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    _editorImg.src = src;
+  }
+
+  function drawEditorCanvas() {
+    if (!_editorCtx) return;
+    _editorCtx.clearRect(0, 0, _displayW, _displayH);
+    _editorCtx.drawImage(_editorImg, 0, 0, _displayW, _displayH);
+    if (_cropRect && _cropRect.w > 4 && _cropRect.h > 4) {
+      _editorCtx.fillStyle = 'rgba(0,0,0,0.52)';
+      _editorCtx.fillRect(0, 0, _displayW, _cropRect.y);
+      _editorCtx.fillRect(0, _cropRect.y, _cropRect.x, _cropRect.h);
+      _editorCtx.fillRect(_cropRect.x + _cropRect.w, _cropRect.y, _displayW - _cropRect.x - _cropRect.w, _cropRect.h);
+      _editorCtx.fillRect(0, _cropRect.y + _cropRect.h, _displayW, _displayH - _cropRect.y - _cropRect.h);
+      _editorCtx.strokeStyle = '#fff'; _editorCtx.lineWidth = 2;
+      _editorCtx.setLineDash([6, 3]);
+      _editorCtx.strokeRect(_cropRect.x, _cropRect.y, _cropRect.w, _cropRect.h);
+      _editorCtx.setLineDash([]);
+    }
+  }
+
+  function updateEditorSize() {
+    const s = parseInt(document.getElementById('img-resize-slider').value);
+    const cw = _cropRect && _cropRect.w > 4 ? _cropRect.w / _imgScale : _natW;
+    const ch = _cropRect && _cropRect.h > 4 ? _cropRect.h / _imgScale : _natH;
+    document.getElementById('img-editor-size').textContent =
+      `${Math.round(cw * s / 100)} × ${Math.round(ch * s / 100)} px`;
+  }
+
+  // Canvas mouse/touch drag
+  document.getElementById('img-crop-canvas').addEventListener('mousedown', (e) => {
+    const r = _editorCanvas.getBoundingClientRect();
+    _cropStart = { x: e.clientX - r.left, y: e.clientY - r.top }; _isDragging = true;
+  });
+  document.addEventListener('mousemove', (e) => {
+    if (!_isDragging || !_cropStart) return;
+    const r = _editorCanvas.getBoundingClientRect();
+    const mx = Math.max(0, Math.min(e.clientX - r.left, _displayW));
+    const my = Math.max(0, Math.min(e.clientY - r.top, _displayH));
+    _cropRect = { x: Math.min(_cropStart.x, mx), y: Math.min(_cropStart.y, my),
+                  w: Math.abs(mx - _cropStart.x), h: Math.abs(my - _cropStart.y) };
+    drawEditorCanvas(); updateEditorSize();
+  });
+  document.addEventListener('mouseup', () => { _isDragging = false; });
+  document.getElementById('img-crop-canvas').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const t = e.touches[0]; const r = _editorCanvas.getBoundingClientRect();
+    _cropStart = { x: t.clientX - r.left, y: t.clientY - r.top }; _isDragging = true;
+  }, { passive: false });
+  document.addEventListener('touchmove', (e) => {
+    if (!_isDragging || !_cropStart) return; e.preventDefault();
+    const t = e.touches[0]; const r = _editorCanvas.getBoundingClientRect();
+    const mx = Math.max(0, Math.min(t.clientX - r.left, _displayW));
+    const my = Math.max(0, Math.min(t.clientY - r.top, _displayH));
+    _cropRect = { x: Math.min(_cropStart.x, mx), y: Math.min(_cropStart.y, my),
+                  w: Math.abs(mx - _cropStart.x), h: Math.abs(my - _cropStart.y) };
+    drawEditorCanvas(); updateEditorSize();
+  }, { passive: false });
+  document.addEventListener('touchend', () => { _isDragging = false; });
+  document.getElementById('img-resize-slider').addEventListener('input', updateEditorSize);
+
+  function resetCrop() { _cropRect = null; drawEditorCanvas(); updateEditorSize(); }
+
+  function applyImageEdit() {
+    const s = parseInt(document.getElementById('img-resize-slider').value);
+    let sx = 0, sy = 0, sw = _natW, sh = _natH;
+    if (_cropRect && _cropRect.w > 4 && _cropRect.h > 4) {
+      sx = Math.round(_cropRect.x / _imgScale); sy = Math.round(_cropRect.y / _imgScale);
+      sw = Math.round(_cropRect.w / _imgScale); sh = Math.round(_cropRect.h / _imgScale);
+    }
+    const outW = Math.max(1, Math.round(sw * s / 100));
+    const outH = Math.max(1, Math.round(sh * s / 100));
+    const out = document.createElement('canvas');
+    out.width = outW; out.height = outH;
+    out.getContext('2d').drawImage(_editorImg, sx, sy, sw, sh, 0, 0, outW, outH);
+    _pendingImage = out.toDataURL('image/jpeg', 0.88);
+    document.getElementById('img-preview').src = _pendingImage;
+    document.getElementById('img-preview-info').textContent = `編集済み (${outW} × ${outH} px)`;
+    document.getElementById('img-editor').style.display = 'none';
+    hideImgMessages();
+  }
+
+  function cancelImageEdit() {
+    document.getElementById('img-editor').style.display = 'none';
   }
 
   function saveItem() {
