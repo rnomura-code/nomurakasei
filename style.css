@@ -957,9 +957,11 @@
       content: '';
       position: absolute;
       top: 0; right: 0;
-      width: 40%; height: 100%;
-      background: url('images/KNT_Brouchore_JP_Page_01.jpg') center/cover;
-      opacity: .12;
+      width: 50%; height: 100%;
+      background: url('images/knt_gtw_factory.jpg') center/cover;
+      opacity: .28;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40%);
+      mask-image: linear-gradient(to right, transparent 0%, black 40%);
     }
     .dual-axis-title {
       font-size: 22px;
