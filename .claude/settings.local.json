@@ -25,7 +25,11 @@
       "Bash(cp \"Nomura Kasei Photo/KNT/KNT_Brouchore_JP_Page_12.jpg\" /tmp/knt_src2.jpg)",
       "Bash(sips --cropToHeightWidth 1040 1440 --cropOffset 1340 80 /tmp/knt_src2.jpg -o images/knt_gtw_factory.jpg)",
       "Bash(sips --cropToHeightWidth 760 1440 --cropOffset 400 80 /tmp/knt_src.jpg -o images/knt_lkb_factory.jpg)",
-      "Bash(sips --cropToHeightWidth 900 1440 --cropOffset 1400 80 /tmp/knt_src2.jpg -o images/knt_gtw_factory.jpg)"
+      "Bash(sips --cropToHeightWidth 900 1440 --cropOffset 1400 80 /tmp/knt_src2.jpg -o images/knt_gtw_factory.jpg)",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/Nomura Kasei Photo/KNT/KNT_Brouchore_JP_Page_03.jpg\")",
+      "Bash(cp \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/Nomura Kasei Photo/KNT/KNT_Brouchore_JP_Page_03.jpg\" /tmp/knt_p03.jpg)",
+      "Bash(sips --cropToHeightWidth 1060 3508 --cropOffset 220 0 /tmp/knt_p03.jpg -o \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/images/knt_team.jpg\")",
+      "Bash(sips --cropToHeightWidth 920 3508 --cropOffset 360 0 /tmp/knt_p03.jpg -o \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/images/knt_team.jpg\")"
     ]
   }
 }
