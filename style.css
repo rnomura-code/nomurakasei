@@ -1227,9 +1227,9 @@
       font-size: 11px; font-weight: 700; letter-spacing: .1em;
       color: var(--blue-dk); text-transform: uppercase; margin-bottom: 8px;
     }
-    .knt-dx-content { display: flex; align-items: flex-start; gap: 24px; }
-    .knt-dx-body p { font-size: 13px; color: var(--navy); line-height: 1.85; margin: 0; flex: 1; }
-    .knt-dx-logo { height: 36px; width: auto; flex-shrink: 0; opacity: .85; margin-top: 2px; }
+    .knt-dx-content { display: flex; flex-direction: column; gap: 16px; }
+    .knt-dx-body p { font-size: 13px; color: var(--navy); line-height: 1.85; margin: 0; }
+    .knt-dx-logo { height: 56px; width: auto; display: block; margin: 0 auto; opacity: .9; }
     .knt-website-link { text-align: center; padding-bottom: 8px; }
     .knt-website-btn {
       display: inline-flex; align-items: center; gap: 10px;
