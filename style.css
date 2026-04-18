@@ -1159,7 +1159,7 @@
     .knt-factory-photo {
       width: 100%; height: 200px; object-fit: cover; display: block;
     }
-    .knt-factory-photo--lkb { object-position: center 25%; }
+    .knt-factory-photo--lkb { object-position: center 70%; }
     .knt-factory-photo--gtw { object-position: center 75%; }
     .knt-factory-body { padding: 24px 28px; }
     .knt-factory-tag {
