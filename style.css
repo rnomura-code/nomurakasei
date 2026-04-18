@@ -1098,6 +1098,155 @@
       margin-bottom: 16px;
     }
 
+    /* ===== KNT SECTION ===== */
+    .knt-section {
+      padding: 100px 0 120px;
+      background: linear-gradient(180deg, #f0f5fa 0%, var(--bg) 100%);
+      border-top: 2px solid var(--border);
+    }
+    .knt-header {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+      margin-bottom: 56px;
+    }
+    .knt-title {
+      font-size: clamp(24px, 3vw, 36px); font-weight: 800;
+      color: var(--navy); letter-spacing: -.01em; margin-bottom: 16px;
+    }
+    .knt-lead {
+      font-size: 14px; color: var(--mid); line-height: 2; margin-bottom: 20px;
+    }
+    .knt-values {
+      padding: 14px 18px; background: rgba(77,196,168,.08);
+      border-left: 3px solid #4dc4a8; border-radius: 0 6px 6px 0;
+    }
+    .knt-value-label {
+      display: block; font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      color: #2a9d7c; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .knt-value-text {
+      font-size: 13px; font-weight: 600; color: var(--navy); line-height: 1.8; margin: 0;
+    }
+    .knt-team-photo {
+      width: 100%; border-radius: 12px; object-fit: cover;
+      object-position: center 30%;
+      max-height: 320px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.12);
+    }
+    .knt-specs {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px;
+      background: var(--border); border-radius: 10px; overflow: hidden;
+      margin-bottom: 48px;
+    }
+    .knt-spec-item {
+      background: var(--white); padding: 20px 18px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .knt-spec-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      color: var(--blue-dk); text-transform: uppercase;
+    }
+    .knt-spec-value {
+      font-size: 14px; font-weight: 700; color: var(--navy);
+    }
+    .knt-factories {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+      margin-bottom: 48px;
+    }
+    .knt-factory {
+      background: var(--white); border-radius: 12px; overflow: hidden;
+      border: 1.5px solid var(--border);
+    }
+    .knt-factory-photo {
+      width: 100%; height: 200px; object-fit: cover; display: block;
+    }
+    .knt-factory-photo--lkb { object-position: center 25%; }
+    .knt-factory-photo--gtw { object-position: center 75%; }
+    .knt-factory-body { padding: 24px 28px; }
+    .knt-factory-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      color: var(--blue-dk); text-transform: uppercase; margin-bottom: 8px;
+    }
+    .knt-factory-name {
+      font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+    }
+    .knt-factory-addr {
+      font-size: 12px; color: var(--mid); line-height: 1.8;
+      font-style: normal; margin-bottom: 20px;
+    }
+    .knt-capacity-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-bottom: 20px;
+      padding: 16px; background: var(--bg); border-radius: 8px;
+    }
+    .knt-cap {
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .knt-cap-num {
+      font-size: 18px; font-weight: 800; color: var(--navy);
+      font-variant-numeric: tabular-nums;
+    }
+    .knt-cap-unit {
+      font-size: 11px; color: var(--mid);
+    }
+    .knt-factory-contact {
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px;
+    }
+    .knt-factory-tel {
+      font-size: 15px; font-weight: 700; color: var(--navy); text-decoration: none;
+    }
+    .knt-factory-tel:hover { color: var(--blue); }
+    .knt-factory-email {
+      font-size: 12px; color: var(--mid); text-decoration: none;
+      border-bottom: 1px solid transparent; transition: border-color .2s, color .2s;
+    }
+    .knt-factory-email:hover { color: var(--blue); border-bottom-color: var(--blue); }
+    .knt-clients {
+      background: var(--white); border-radius: 10px; border: 1.5px solid var(--border);
+      padding: 24px 28px; margin-bottom: 28px;
+      display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    }
+    .knt-clients-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      color: var(--blue-dk); text-transform: uppercase; white-space: nowrap;
+    }
+    .knt-clients-list {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .knt-clients-list span {
+      padding: 5px 14px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--navy);
+    }
+    .knt-dx {
+      display: flex; gap: 20px; align-items: flex-start;
+      padding: 20px 24px; background: var(--blue-bg);
+      border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0;
+      margin-bottom: 28px;
+    }
+    .knt-dx-icon { color: var(--blue); flex-shrink: 0; margin-top: 2px; }
+    .knt-dx-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      color: var(--blue-dk); text-transform: uppercase; margin-bottom: 8px;
+    }
+    .knt-dx-body p { font-size: 13px; color: var(--navy); line-height: 1.85; margin: 0; }
+    .knt-website-link { text-align: center; }
+    .knt-website-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 28px; background: var(--navy); color: var(--white);
+      border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;
+      transition: background .2s;
+    }
+    .knt-website-btn:hover { background: var(--blue-dk); }
+    @media (max-width: 900px) {
+      .knt-header { grid-template-columns: 1fr; gap: 32px; }
+      .knt-specs { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .knt-factories { grid-template-columns: 1fr; }
+      .knt-specs { grid-template-columns: repeat(2, 1fr); }
+      .knt-clients { flex-direction: column; gap: 12px; }
+      .knt-capacity-grid { grid-template-columns: 1fr 1fr; }
+    }
+
     /* ===== PRESIDENT ===== */
     #message { padding: 120px 0; background: var(--white); }
     .message-layout {
