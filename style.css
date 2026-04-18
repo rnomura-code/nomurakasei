@@ -1182,8 +1182,8 @@
       display: flex; flex-direction: column; gap: 2px;
     }
     .knt-cap-num {
-      font-size: 18px; font-weight: 800; color: var(--navy);
-      font-variant-numeric: tabular-nums;
+      font-size: 15px; font-weight: 800; color: var(--navy);
+      font-variant-numeric: tabular-nums; word-break: keep-all; white-space: nowrap;
     }
     .knt-cap-unit {
       font-size: 11px; color: var(--mid);
