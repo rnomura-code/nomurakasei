@@ -17,7 +17,15 @@
       "Bash(ls -la \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/\"*.html)",
       "Bash(pkill -f \"npx serve\")",
       "Bash(npx serve:*)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/Nomura Kasei Photo/KNT/KNT_Brouchore_JP_Page_12.jpg\")",
+      "Bash(convert --version)",
+      "Bash(cp \"Nomura Kasei Photo/KNT/KNT_Brouchore_JP_Page_12.jpg\" /tmp/knt_src.jpg)",
+      "Bash(sips --cropToHeightWidth 900 1440 --cropOffset 280 80 /tmp/knt_src.jpg -o images/knt_lkb_factory.jpg)",
+      "Bash(cp \"Nomura Kasei Photo/KNT/KNT_Brouchore_JP_Page_12.jpg\" /tmp/knt_src2.jpg)",
+      "Bash(sips --cropToHeightWidth 1040 1440 --cropOffset 1340 80 /tmp/knt_src2.jpg -o images/knt_gtw_factory.jpg)",
+      "Bash(sips --cropToHeightWidth 760 1440 --cropOffset 400 80 /tmp/knt_src.jpg -o images/knt_lkb_factory.jpg)",
+      "Bash(sips --cropToHeightWidth 900 1440 --cropOffset 1400 80 /tmp/knt_src2.jpg -o images/knt_gtw_factory.jpg)"
     ]
   }
 }
