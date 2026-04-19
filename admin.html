@@ -435,19 +435,20 @@
 
 <script>
   // ===== パスワード設定 =====
-  // 変更する場合はこの文字列を書き換えてください
   const ADMIN_PASSWORD = 'nomura2024';
   const SESSION_KEY = 'nk_admin_session';
   const NEWS_KEY = 'nk_news';
+  const GH_SETTINGS_KEY = 'nk_gh_settings';
 
   // ===== 初期化 =====
   window.addEventListener('DOMContentLoaded', () => {
     if (sessionStorage.getItem(SESSION_KEY) === '1') {
       showAdmin();
     }
-    // 今日の日付をデフォルト表示
     const today = new Date().toISOString().slice(0, 10);
     document.getElementById('f-date').value = today;
+    loadGHSettingsToForm();
+    updateGHStatusDot();
   });
 
   // ===== ログイン =====
