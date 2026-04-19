@@ -32,7 +32,9 @@
       "Bash(sips --cropToHeightWidth 920 3508 --cropOffset 360 0 /tmp/knt_p03.jpg -o \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/images/knt_team.jpg\")",
       "Bash(sips --cropToHeightWidth 920 1600 --cropOffset 360 954 /tmp/knt_p03.jpg -o \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/images/knt_team.jpg\")",
       "Read(//Users/ryotanomura/Desktop/**)",
-      "Read(//Users/ryotanomura/Downloads/**)"
+      "Read(//Users/ryotanomura/Downloads/**)",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
     ]
   }
 }
