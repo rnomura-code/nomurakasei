@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nomura-kasei.co.jp/sitemap.xml
