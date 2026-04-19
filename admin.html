@@ -475,15 +475,107 @@
   function showAdmin() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-screen').style.display = 'block';
-    renderList();
+    loadNewsAndRender();
+  }
+
+  // ===== GitHub設定 =====
+  function getGHSettings() {
+    try { return JSON.parse(localStorage.getItem(GH_SETTINGS_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveGHSettings() {
+    const settings = {
+      owner: document.getElementById('gh-owner').value.trim(),
+      repo: document.getElementById('gh-repo').value.trim(),
+      branch: document.getElementById('gh-branch').value.trim() || 'main',
+      token: document.getElementById('gh-token').value.trim()
+    };
+    localStorage.setItem(GH_SETTINGS_KEY, JSON.stringify(settings));
+    updateGHStatusDot();
+    showToast('GitHub設定を保存しました。');
+  }
+  function loadGHSettingsToForm() {
+    const s = getGHSettings();
+    if (s.owner) document.getElementById('gh-owner').value = s.owner;
+    if (s.repo) document.getElementById('gh-repo').value = s.repo;
+    document.getElementById('gh-branch').value = s.branch || 'main';
+    if (s.token) document.getElementById('gh-token').value = s.token;
+  }
+  function updateGHStatusDot() {
+    const s = getGHSettings();
+    const dot = document.getElementById('gh-status-dot');
+    dot.className = 'gh-status ' + (s.token && s.owner && s.repo ? 'connected' : '');
+  }
+  function toggleGHCard() {
+    const body = document.getElementById('gh-card-body');
+    const label = document.getElementById('gh-toggle-label');
+    const open = body.classList.toggle('open');
+    label.textContent = open ? '閉じる ▴' : '設定を開く ▾';
+  }
+  async function testGHConnection() {
+    const s = getGHSettings();
+    const res = document.getElementById('gh-test-result');
+    if (!s.token || !s.owner || !s.repo) {
+      res.textContent = '設定が不完全です。'; res.className = 'gh-test-result ng'; return;
+    }
+    res.textContent = '接続中...'; res.className = 'gh-test-result';
+    try {
+      const r = await fetch(`https://api.github.com/repos/${s.owner}/${s.repo}/contents/news.json`, {
+        headers: { 'Authorization': `token ${s.token}` }
+      });
+      if (r.ok) { res.textContent = '✓ 接続OK！'; res.className = 'gh-test-result ok'; }
+      else { res.textContent = `✗ エラー (${r.status})。オーナー名・リポジトリ名・トークンを確認してください。`; res.className = 'gh-test-result ng'; }
+    } catch(e) {
+      res.textContent = '✗ 接続失敗：' + e.message; res.className = 'gh-test-result ng';
+    }
+  }
+
+  // ===== GitHub API で news.json を更新 =====
+  async function pushNewsToGitHub(arr) {
+    const s = getGHSettings();
+    if (!s.token || !s.owner || !s.repo) return false;
+    const url = `https://api.github.com/repos/${s.owner}/${s.repo}/contents/news.json`;
+    const headers = { 'Authorization': `token ${s.token}`, 'Content-Type': 'application/json' };
+    let sha = '';
+    try {
+      const r = await fetch(url, { headers });
+      if (r.ok) { const d = await r.json(); sha = d.sha; }
+    } catch(e) {}
+    const jsonStr = JSON.stringify(arr, null, 2);
+    const bytes = new TextEncoder().encode(jsonStr);
+    const binStr = Array.from(bytes).map(b => String.fromCharCode(b)).join('');
+    const b64 = btoa(binStr);
+    const body = { message: 'Update news.json via admin panel', content: b64, branch: s.branch || 'main' };
+    if (sha) body.sha = sha;
+    try {
+      const r = await fetch(url, { method: 'PUT', headers, body: JSON.stringify(body) });
+      return r.ok;
+    } catch(e) { return false; }
   }
 
   // ===== データ操作 =====
-  function getNews() {
-    try { return JSON.parse(localStorage.getItem(NEWS_KEY) || '[]'); } catch(e) { return []; }
+  let _cachedNews = null;
+  async function loadNewsAndRender() {
+    try {
+      const r = await fetch('news.json?_=' + Date.now());
+      if (r.ok) { _cachedNews = await r.json(); }
+    } catch(e) {}
+    if (!_cachedNews) {
+      try { _cachedNews = JSON.parse(localStorage.getItem(NEWS_KEY) || '[]'); } catch(e) { _cachedNews = []; }
+    }
+    renderList();
   }
-  function saveNews(arr) {
+  function getNews() {
+    return _cachedNews || [];
+  }
+  async function saveNews(arr) {
+    _cachedNews = arr;
     localStorage.setItem(NEWS_KEY, JSON.stringify(arr));
+    const s = getGHSettings();
+    if (s.token && s.owner && s.repo) {
+      const ok = await pushNewsToGitHub(arr);
+      return ok;
+    }
+    return null; // GitHub未設定
   }
 
   // ===== 画像処理 =====
