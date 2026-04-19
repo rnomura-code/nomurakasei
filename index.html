@@ -540,26 +540,31 @@
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   revealEls.forEach(el => revealObs.observe(el));
 
-  // ===== News (localStorage) =====
+  // ===== News (news.json) =====
   let _newsItems = [];
-  (function renderNews() {
+  const catClass2 = { '重要': 'cat-important', '製品': 'cat-product', 'お知らせ': '', '採用': '', 'その他': '' };
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function renderNewsItems() {
     const container = document.getElementById('news-list');
-    if (!container) return;
-    try { _newsItems = JSON.parse(localStorage.getItem('nk_news') || '[]'); } catch(e) {}
-    if (!_newsItems.length) return;
-    const catClass = { '重要': 'cat-important', '製品': 'cat-product', 'お知らせ': '', '採用': '', 'その他': '' };
-    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    if (!container || !_newsItems.length) return;
     container.innerHTML = _newsItems.map((item, i) => `
       <div class="news-item news-item--clickable${item.image ? ' news-item--has-img' : ''}" onclick="openNewsModal(${i})">
         <div class="news-item-main">
           <span class="news-date">${esc(item.date)}</span>
-          <span class="news-cat ${catClass[item.category] || ''}">${esc(item.category)}</span>
+          <span class="news-cat ${catClass2[item.category] || ''}">${esc(item.category)}</span>
           <span class="news-title">${esc(item.title)}</span>
           ${item.body ? `<p class="news-body">${esc(item.body)}</p>` : ''}
         </div>
         ${item.image ? `<img class="news-item-img" src="${item.image}" alt="${esc(item.title)}">` : ''}
       </div>`).join('');
-  })();
+  }
+  fetch('news.json?_=' + Date.now())
+    .then(r => r.json())
+    .then(data => { _newsItems = data; renderNewsItems(); })
+    .catch(() => {
+      try { _newsItems = JSON.parse(localStorage.getItem('nk_news') || '[]'); } catch(e) {}
+      renderNewsItems();
+    });
 
   // ===== News Modal =====
   const catClass = { '重要': 'cat-important', '製品': 'cat-product' };
