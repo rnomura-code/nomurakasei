@@ -290,6 +290,46 @@
 
   <main class="admin-body">
 
+    <!-- GitHub連携設定 -->
+    <div class="gh-card">
+      <div class="gh-card-header" onclick="toggleGHCard()">
+        <div class="gh-card-title">
+          <span class="gh-status" id="gh-status-dot"></span>
+          GitHub連携設定
+        </div>
+        <span class="gh-toggle" id="gh-toggle-label">設定を開く ▾</span>
+      </div>
+      <div class="gh-card-body" id="gh-card-body">
+        <p class="gh-desc">
+          保存時に GitHub の <code>news.json</code> を直接更新します。サイトに自動反映されます。<br>
+          <strong>GitHub Personal Access Token</strong>（Fine-grained: <code>Contents: Read and write</code>）が必要です。
+        </p>
+        <div class="gh-fields">
+          <div class="form-group">
+            <label>GitHubオーナー名</label>
+            <input type="text" id="gh-owner" placeholder="例: rnomura-code">
+          </div>
+          <div class="form-group">
+            <label>リポジトリ名</label>
+            <input type="text" id="gh-repo" placeholder="例: nomurakasei">
+          </div>
+          <div class="form-group">
+            <label>ブランチ</label>
+            <input type="text" id="gh-branch" placeholder="main">
+          </div>
+          <div class="form-group">
+            <label>Personal Access Token</label>
+            <input type="password" id="gh-token" placeholder="github_pat_...">
+          </div>
+        </div>
+        <div class="gh-actions">
+          <button class="btn-secondary" onclick="saveGHSettings()">保存</button>
+          <button class="btn-secondary" onclick="testGHConnection()">接続テスト</button>
+          <span class="gh-test-result" id="gh-test-result"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- 追加・編集フォーム -->
     <div class="form-card">
       <h2 id="form-title">新規お知らせを追加</h2>
