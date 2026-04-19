@@ -830,11 +830,18 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function deleteItem(id) {
+  async function deleteItem(id) {
     if (!confirm('このお知らせを削除しますか？')) return;
     const news = getNews().filter(n => n.id !== id);
-    saveNews(news);
-    showToast('削除しました。');
+    showToast('削除中...');
+    const ghResult = await saveNews(news);
+    if (ghResult === true) {
+      showToast('削除しました（GitHubに反映済）。');
+    } else if (ghResult === false) {
+      showToast('ローカル削除しましたが、GitHub反映に失敗しました。');
+    } else {
+      showToast('削除しました。');
+    }
     renderList();
   }
 
