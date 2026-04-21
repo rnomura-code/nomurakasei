@@ -2081,6 +2081,53 @@
     .sub-hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; color: var(--white); margin-top: 14px; line-height: 1.2; word-break: keep-all; }
     .sub-hero h1 em { font-style: normal; color: var(--blue); }
 
+    /* ===== STRENGTHS LIST (index) ===== */
+    .str-list {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin-top: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .str-item {
+      padding: 32px 28px 36px;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+    .str-item:last-child { border-right: none; }
+    .str-num {
+      display: block;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--blue);
+      opacity: .18;
+      line-height: 1;
+      margin-bottom: 20px;
+      letter-spacing: -.02em;
+    }
+    .str-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .str-desc {
+      font-size: 12px;
+      color: var(--mid);
+      line-height: 1.8;
+    }
+    @media (max-width: 900px) {
+      .str-list { grid-template-columns: 1fr 1fr; }
+      .str-item { border-bottom: 1px solid var(--border); }
+      .str-item:nth-child(2n) { border-right: none; }
+    }
+    @media (max-width: 560px) {
+      .str-list { grid-template-columns: 1fr; }
+      .str-item { border-right: none; }
+      .str-num { font-size: 28px; margin-bottom: 12px; }
+    }
+
     /* ===== TOP PAGE SUMMARY SECTIONS ===== */
     .top-summary { padding: 100px 0; }
     .top-summary-inner {
