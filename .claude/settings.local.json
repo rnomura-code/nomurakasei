@@ -34,7 +34,12 @@
       "Read(//Users/ryotanomura/Desktop/**)",
       "Read(//Users/ryotanomura/Downloads/**)",
       "mcp__Claude_in_Chrome__navigate",
-      "mcp__Claude_in_Chrome__tabs_context_mcp"
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(python3)",
+      "Bash(unzip -l \"/Users/ryotanomura/Downloads/nomura-kasei-website.zip\")",
+      "Bash(grep -E \"\\\\.\\(html|css|js|json\\)$|/$\")",
+      "Bash(mkdir -p \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v2\")",
+      "Bash(unzip -q -o \"/Users/ryotanomura/Downloads/nomura-kasei-website.zip\" -d \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v2\")"
     ]
   }
 }
