@@ -39,7 +39,22 @@
       "Bash(unzip -l \"/Users/ryotanomura/Downloads/nomura-kasei-website.zip\")",
       "Bash(grep -E \"\\\\.\\(html|css|js|json\\)$|/$\")",
       "Bash(mkdir -p \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v2\")",
-      "Bash(unzip -q -o \"/Users/ryotanomura/Downloads/nomura-kasei-website.zip\" -d \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v2\")"
+      "Bash(unzip -q -o \"/Users/ryotanomura/Downloads/nomura-kasei-website.zip\" -d \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v2\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/)",
+      "Bash(curl -sf -o /dev/null http://localhost:3000/photo-gallery.html)",
+      "Bash(unzip -l \"/Users/ryotanomura/Downloads/Nomura Kasei corporate website \\(1\\).zip\")",
+      "Bash(grep -E \"\\\\.\\(html|css|js|json|md|txt|xml\\)$|/$\")",
+      "Bash(awk '{print $NF}')",
+      "Bash(grep -E \"^[^/]+/$\")",
+      "Bash(awk 'NR>3 {print $NF}')",
+      "Bash(awk -F/ '{print $1}')",
+      "Bash(rm -rf '/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3')",
+      "Bash(mkdir -p '/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3')",
+      "Bash(unzip -q \"/Users/ryotanomura/Downloads/Nomura Kasei corporate website \\(1\\).zip\" -d \"/tmp/nomura_v3_extract\")",
+      "Bash(cp -R /tmp/nomura_v3_extract/variant-b-warmth/. '/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/')",
+      "Bash(rm -rf \"/tmp/nomura_v3_extract\")",
+      "Bash(rm -rf '/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3' /tmp/nomura_v3_extract)",
+      "Bash(ditto -x -k --sequesterRsrc \"/Users/ryotanomura/Downloads/Nomura Kasei corporate website \\(1\\).zip\" \"/tmp/nomura_v3_extract\")"
     ]
   }
 }

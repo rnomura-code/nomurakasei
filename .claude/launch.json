@@ -12,6 +12,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["--yes", "serve", "-l", "3001", "/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v2"],
       "port": 3001
+    },
+    {
+      "name": "nomura-kasei-v3",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "3002", "/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3"],
+      "port": 3002
     }
   ]
 }
