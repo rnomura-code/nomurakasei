@@ -54,7 +54,8 @@
       "Bash(cp -R /tmp/nomura_v3_extract/variant-b-warmth/. '/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/')",
       "Bash(rm -rf \"/tmp/nomura_v3_extract\")",
       "Bash(rm -rf '/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3' /tmp/nomura_v3_extract)",
-      "Bash(ditto -x -k --sequesterRsrc \"/Users/ryotanomura/Downloads/Nomura Kasei corporate website \\(1\\).zip\" \"/tmp/nomura_v3_extract\")"
+      "Bash(ditto -x -k --sequesterRsrc \"/Users/ryotanomura/Downloads/Nomura Kasei corporate website \\(1\\).zip\" \"/tmp/nomura_v3_extract\")",
+      "Bash(curl -sf -o /dev/null http://localhost:3002/)"
     ]
   }
 }
