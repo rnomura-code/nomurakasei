@@ -20,21 +20,116 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "株式会社ノムラ化成",
-    "url": "https://nomura-kasei.co.jp",
-    "logo": "https://nomura-kasei.co.jp/images/ノムラ化成様_組合せー横_RGB.png",
-    "telephone": "+81-48-794-4352",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "裏慈恩寺新房222",
-      "addressLocality": "さいたま市岩槻区",
-      "addressRegion": "埼玉県",
-      "postalCode": "339-0002",
-      "addressCountry": "JP"
-    },
-    "foundingDate": "1968",
-    "description": "1968年創業のドアガスケット・異型押出専門メーカー。軟質PVC・エラストマーを用いた異型押出技術を核に、カスタム断面の共同開発から小ロット品まで対応。ISO9001/14001認証取得。"
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://nomura-kasei.co.jp/#organization",
+        "name": "株式会社ノムラ化成",
+        "url": "https://nomura-kasei.co.jp",
+        "logo": "https://nomura-kasei.co.jp/images/ノムラ化成様_組合せー横_RGB.png",
+        "telephone": "+81-48-794-4352",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "裏慈恩寺新房222",
+          "addressLocality": "さいたま市岩槻区",
+          "addressRegion": "埼玉県",
+          "postalCode": "339-0002",
+          "addressCountry": "JP"
+        },
+        "foundingDate": "1968",
+        "description": "1968年創業のドアガスケット・異型押出専門メーカー。軟質PVC・エラストマーを用いた異型押出技術を核に、カスタム断面の共同開発から小ロット品まで対応。ISO9001/14001認証取得。"
+      },
+      {
+        "@type": "Product",
+        "name": "ドアガスケット / ドアパッキン",
+        "description": "家庭用冷蔵庫・業務用冷蔵庫・医療用冷蔵庫（薬品庫・検体保管庫）・理化学機器など幅広い用途に対応するマグネットガスケット。カスタム断面の共同開発から既存品の流用提案、小ロット品まで対応します。",
+        "image": [
+          "https://nomura-kasei.co.jp/images/DSC_0351.jpg",
+          "https://nomura-kasei.co.jp/images/DSC_0352.jpg"
+        ],
+        "category": "ドアガスケット・ドアパッキン",
+        "brand": { "@type": "Brand", "name": "ノムラ化成" },
+        "manufacturer": { "@id": "https://nomura-kasei.co.jp/#organization" },
+        "offers": {
+          "@type": "Offer",
+          "url": "https://nomura-kasei.co.jp/contact.html",
+          "priceCurrency": "JPY",
+          "price": "0",
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": "2027-12-31",
+          "seller": { "@id": "https://nomura-kasei.co.jp/#organization" },
+          "businessFunction": "https://schema.org/Sell",
+          "description": "個別見積り（お問い合わせください）"
+        }
+      },
+      {
+        "@type": "Product",
+        "name": "感圧スイッチ",
+        "description": "樹脂押出からアセンブリまで一貫生産。半導体工場のロボットに搭載し、人やモノを衝撃から守るセーフティセンサー。",
+        "image": "https://nomura-kasei.co.jp/images/DSC_0349.jpg",
+        "category": "感圧スイッチ・センサー",
+        "brand": { "@type": "Brand", "name": "ノムラ化成" },
+        "manufacturer": { "@id": "https://nomura-kasei.co.jp/#organization" },
+        "offers": {
+          "@type": "Offer",
+          "url": "https://nomura-kasei.co.jp/contact.html",
+          "priceCurrency": "JPY",
+          "price": "0",
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": "2027-12-31",
+          "seller": { "@id": "https://nomura-kasei.co.jp/#organization" },
+          "businessFunction": "https://schema.org/Sell",
+          "description": "個別見積り（お問い合わせください）"
+        }
+      },
+      {
+        "@type": "Product",
+        "name": "軟質異型押出製品",
+        "description": "軟質塩ビ（PVC）・エラストマーの異型押出技術。複雑な断面形状・発泡・中空・複合断面まで、カスタム金型の設計から量産まで一貫対応。テーブルエッジ・スロープ・緩衝材・シール材・配線保護カバーなど幅広い用途。",
+        "image": [
+          "https://nomura-kasei.co.jp/images/DSC_0346.jpg",
+          "https://nomura-kasei.co.jp/images/DSC_0350.jpg",
+          "https://nomura-kasei.co.jp/images/DSC_0348.jpg"
+        ],
+        "category": "異型押出製品",
+        "brand": { "@type": "Brand", "name": "ノムラ化成" },
+        "manufacturer": { "@id": "https://nomura-kasei.co.jp/#organization" },
+        "offers": {
+          "@type": "Offer",
+          "url": "https://nomura-kasei.co.jp/contact.html",
+          "priceCurrency": "JPY",
+          "price": "0",
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": "2027-12-31",
+          "seller": { "@id": "https://nomura-kasei.co.jp/#organization" },
+          "businessFunction": "https://schema.org/Sell",
+          "description": "個別見積り（お問い合わせください）"
+        }
+      },
+      {
+        "@type": "Product",
+        "name": "自社ブランド緩衝材（安心ガード・コーナー君）",
+        "description": "「安心ガード」「コーナー君」など、生活のあらゆる場面に欠かせない緩衝材を自社開発。駐車場の支柱カバー、工事現場の養生材、介護施設のコーナー保護など多彩なシーンで活躍。",
+        "image": [
+          "https://nomura-kasei.co.jp/images/DSC_0287.jpg",
+          "https://nomura-kasei.co.jp/images/DSC_0288.jpg"
+        ],
+        "category": "緩衝材・コーナーガード",
+        "brand": { "@type": "Brand", "name": "ノムラ化成" },
+        "manufacturer": { "@id": "https://nomura-kasei.co.jp/#organization" },
+        "offers": {
+          "@type": "Offer",
+          "url": "https://nomura-kasei.co.jp/contact.html",
+          "priceCurrency": "JPY",
+          "price": "0",
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": "2027-12-31",
+          "seller": { "@id": "https://nomura-kasei.co.jp/#organization" },
+          "businessFunction": "https://schema.org/Sell",
+          "description": "個別見積り（お問い合わせください）"
+        }
+      }
+    ]
   }
   </script>
 </head>
