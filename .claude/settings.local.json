@@ -63,7 +63,8 @@
       "Bash(python3 -c ' *)",
       "Bash(curl -s \"https://www.nomura-kasei.co.jp/products.html\")",
       "Bash(curl -s \"https://www.nomura-kasei.co.jp/products.html\" -o products.live.html)",
-      "Bash(curl -s \"https://www.nomura-kasei.co.jp/\")"
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/\")",
+      "Bash(mkdir -p \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/.claude\")"
     ]
   }
 }
