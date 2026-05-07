@@ -60,7 +60,9 @@
       "Bash(curl -s http://localhost:3002/robots.txt)",
       "Bash(curl -s http://localhost:3002/sitemap.xml)",
       "Bash(zip -rq -X \"/Users/ryotanomura/Desktop/nomura-kasei-deploy.zip\" . -x \".DS_Store\" -x \"*/.DS_Store\" -x \".claude/*\")",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/products.html\")",
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/products.html\" -o products.live.html)"
     ]
   }
 }
