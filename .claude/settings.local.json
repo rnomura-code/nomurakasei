@@ -67,7 +67,15 @@
       "Bash(mkdir -p \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/.claude\")",
       "Bash(curl -sI \"https://www.nomura-kasei.co.jp/\")",
       "Bash(curl -sI \"http://www.nomura-kasei.co.jp/\")",
-      "Bash(curl -sI \"https://www.nomura-kasei.co.jp/admin/\")"
+      "Bash(curl -sI \"https://www.nomura-kasei.co.jp/admin/\")",
+      "Bash(curl -sI \"https://www.nomura-kasei.co.jp/?_=$\\(date +%s\\)\")",
+      "Bash(curl -sI \"https://www.nomura-kasei.co.jp/style.css\")",
+      "Bash(curl -sI \"https://www.nomura-kasei.co.jp/nav.js\")",
+      "Bash(curl -sI \"https://www.nomura-kasei.co.jp/1top.htm\")",
+      "Bash(curl -sI \"https://www.nomura-kasei.co.jp/3hinmoku.html\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" \"https://www.nomura-kasei.co.jp/contact.php\")",
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/contact.html\")",
+      "Bash(awk '/script/{print NR\": \"$0}' \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/index.html\")"
     ]
   }
 }
