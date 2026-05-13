@@ -81,7 +81,14 @@
       "Bash(sed -n '112,117p' locations.html)",
       "Bash(python3 -c \"import pptx; print\\(pptx.__version__\\)\")",
       "Bash(npm ls *)",
-      "Bash(pip3 install *)"
+      "Bash(pip3 install *)",
+      "Bash(python3 build_pptx.py)",
+      "Bash(ls /Applications/ | grep -i libre 2>&1; which soffice 2>&1; ls /Applications/LibreOffice.app/Contents/MacOS/soffice 2>&1)",
+      "Bash(brew list *)",
+      "Bash(mdfind \"kMDItemFSName == 'LibreOffice.app'\")",
+      "Bash(qlmanage -t -s 1600 -o . training_menu.pptx)",
+      "Bash(python3 -m markitdown /tmp/training_menu.pptx)",
+      "Bash(python3 -c \"from markitdown import MarkItDown; m=MarkItDown\\(\\); print\\(m.convert\\('/tmp/training_menu.pptx'\\).text_content\\)\")"
     ]
   }
 }
