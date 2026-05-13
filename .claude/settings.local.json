@@ -76,7 +76,12 @@
       "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" \"https://www.nomura-kasei.co.jp/contact.php\")",
       "Bash(curl -s \"https://www.nomura-kasei.co.jp/contact.html\")",
       "Bash(awk '/script/{print NR\": \"$0}' \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/index.html\")",
-      "Bash(php -l \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/contact.php\")"
+      "Bash(php -l \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/contact.php\")",
+      "Bash(sed -n '61p' locations.html)",
+      "Bash(sed -n '112,117p' locations.html)",
+      "Bash(python3 -c \"import pptx; print\\(pptx.__version__\\)\")",
+      "Bash(npm ls *)",
+      "Bash(pip3 install *)"
     ]
   }
 }
