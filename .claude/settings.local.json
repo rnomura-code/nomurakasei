@@ -89,7 +89,12 @@
       "Bash(qlmanage -t -s 1600 -o . training_menu.pptx)",
       "Bash(python3 -m markitdown /tmp/training_menu.pptx)",
       "Bash(python3 -c \"from markitdown import MarkItDown; m=MarkItDown\\(\\); print\\(m.convert\\('/tmp/training_menu.pptx'\\).text_content\\)\")",
-      "Bash(curl -s \"https://www.nomura-kasei.co.jp/robots.txt\")"
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/robots.txt\")",
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/\" -L -o /dev/null -w \"Final URL: %{url_effective}\\\\nHTTP: %{http_code}\\\\n\")",
+      "Bash(curl -s \"https://nomura-kasei.co.jp/\" -L -o /dev/null -w \"Final URL: %{url_effective}\\\\nHTTP: %{http_code}\\\\n\")",
+      "Bash(curl -s \"https://nomura-kasei.co.jp/\")",
+      "Bash(curl -sI \"https://nomura-kasei.co.jp/\")",
+      "Bash(mdls -name kMDItemTextContent \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/images/safeguard2.pdf\")"
     ]
   }
 }
