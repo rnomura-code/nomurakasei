@@ -88,7 +88,8 @@
       "Bash(mdfind \"kMDItemFSName == 'LibreOffice.app'\")",
       "Bash(qlmanage -t -s 1600 -o . training_menu.pptx)",
       "Bash(python3 -m markitdown /tmp/training_menu.pptx)",
-      "Bash(python3 -c \"from markitdown import MarkItDown; m=MarkItDown\\(\\); print\\(m.convert\\('/tmp/training_menu.pptx'\\).text_content\\)\")"
+      "Bash(python3 -c \"from markitdown import MarkItDown; m=MarkItDown\\(\\); print\\(m.convert\\('/tmp/training_menu.pptx'\\).text_content\\)\")",
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/robots.txt\")"
     ]
   }
 }
