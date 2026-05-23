@@ -94,7 +94,11 @@
       "Bash(curl -s \"https://nomura-kasei.co.jp/\" -L -o /dev/null -w \"Final URL: %{url_effective}\\\\nHTTP: %{http_code}\\\\n\")",
       "Bash(curl -s \"https://nomura-kasei.co.jp/\")",
       "Bash(curl -sI \"https://nomura-kasei.co.jp/\")",
-      "Bash(mdls -name kMDItemTextContent \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/images/safeguard2.pdf\")"
+      "Bash(mdls -name kMDItemTextContent \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website_v3/images/safeguard2.pdf\")",
+      "Bash(grep -v \"^--$\")",
+      "Bash(mv -f \"safeguard1-圧縮済み.pdf\" safeguard1.pdf)",
+      "Bash(mv -f \"safeguard6-圧縮済み.pdf\" safeguard6.pdf)",
+      "Bash(awk '{print $9, $5}')"
     ]
   }
 }
