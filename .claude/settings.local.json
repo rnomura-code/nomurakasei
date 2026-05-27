@@ -98,7 +98,9 @@
       "Bash(grep -v \"^--$\")",
       "Bash(mv -f \"safeguard1-圧縮済み.pdf\" safeguard1.pdf)",
       "Bash(mv -f \"safeguard6-圧縮済み.pdf\" safeguard6.pdf)",
-      "Bash(awk '{print $9, $5}')"
+      "Bash(awk '{print $9, $5}')",
+      "Bash(npx clasp *)",
+      "Bash(cd \"/Users/ryotanomura/Desktop/nomura-kintai\" && echo \"=== login status ===\" && npx clasp login --status 2>&1 | head -5; echo \"=== creds exist ===\"; ls -la ~/.clasprc.json 2>&1)"
     ]
   }
 }
