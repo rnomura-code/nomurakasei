@@ -107,7 +107,8 @@
       "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbw-5Kzq71fwLHZj4aMq6kEuOXE9HI45qJzcEP6tv2HY3k7VhJad-xqfl4EFui6dbjs/exec?action=migrate&target=employees&token=nk-inspect-7f3a9\")",
       "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbw-5Kzq71fwLHZj4aMq6kEuOXE9HI45qJzcEP6tv2HY3k7VhJad-xqfl4EFui6dbjs/exec?action=migrate&target=salary&token=nk-inspect-7f3a9\")",
       "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbw-5Kzq71fwLHZj4aMq6kEuOXE9HI45qJzcEP6tv2HY3k7VhJad-xqfl4EFui6dbjs/exec?action=peek&tab=%E7%A4%BE%E5%93%A1%E3%83%9E%E3%82%B9%E3%82%BF&n=3&token=nk-inspect-7f3a9\")",
-      "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbw-5Kzq71fwLHZj4aMq6kEuOXE9HI45qJzcEP6tv2HY3k7VhJad-xqfl4EFui6dbjs/exec?action=peek&tab=%E7%B5%A6%E4%B8%8E%E3%83%9E%E3%82%B9%E3%82%BF&n=2&token=nk-inspect-7f3a9\")"
+      "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbw-5Kzq71fwLHZj4aMq6kEuOXE9HI45qJzcEP6tv2HY3k7VhJad-xqfl4EFui6dbjs/exec?action=peek&tab=%E7%B5%A6%E4%B8%8E%E3%83%9E%E3%82%B9%E3%82%BF&n=2&token=nk-inspect-7f3a9\")",
+      "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbw-5Kzq71fwLHZj4aMq6kEuOXE9HI45qJzcEP6tv2HY3k7VhJad-xqfl4EFui6dbjs/exec?action=peek&tab=%E7%A4%BE%E5%93%A1%E3%83%9E%E3%82%B9%E3%82%BF&n=2&token=nk-inspect-7f3a9\")"
     ]
   }
 }
