@@ -100,7 +100,10 @@
       "Bash(mv -f \"safeguard6-圧縮済み.pdf\" safeguard6.pdf)",
       "Bash(awk '{print $9, $5}')",
       "Bash(npx clasp *)",
-      "Bash(cd \"/Users/ryotanomura/Desktop/nomura-kintai\" && echo \"=== login status ===\" && npx clasp login --status 2>&1 | head -5; echo \"=== creds exist ===\"; ls -la ~/.clasprc.json 2>&1)"
+      "Bash(cd \"/Users/ryotanomura/Desktop/nomura-kintai\" && echo \"=== login status ===\" && npx clasp login --status 2>&1 | head -5; echo \"=== creds exist ===\"; ls -la ~/.clasprc.json 2>&1)",
+      "Bash(curl -sL \"https://script.google.com/macros/s/AKfycbw-5Kzq71fwLHZj4aMq6kEuOXE9HI45qJzcEP6tv2HY3k7VhJad-xqfl4EFui6dbjs/exec?action=inspect&token=nk-inspect-7f3a9\" -o /tmp/nk_inspect.json)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)"
     ]
   }
 }
