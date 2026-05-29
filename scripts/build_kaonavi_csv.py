@@ -193,19 +193,17 @@ for path, sheet in YUKYU_FILES:
         if sid in yukyu and yukyu[sid][0] not in (None, ""):
             continue  # 既に他シートから取得済み
 
-        # 最新の有効スナップショット日付を探す
+        # TARGET_YUKYU_DATE と一致する日付を対象とする（なければそれ以前で最新）
         target_date = None
-        for d in reversed(sorted_dates):
-            f = d_map.get(d, {})
-            has_any = any(f.get(k) is not None for k in ("付与日数","利用日数","利用時間","失効日数","残日数","残時間"))
-            if has_any:
-                target_date = d
-                break
+        if TARGET_YUKYU_DATE in sorted_dates:
+            target_date = TARGET_YUKYU_DATE
+        else:
+            valid = [d for d in sorted_dates if d <= TARGET_YUKYU_DATE]
+            if valid: target_date = max(valid)
         if target_date is None: continue
-
-        # 1つ前のスナップショットを前月とする
-        idx_t = sorted_dates.index(target_date)
-        prev_date = sorted_dates[idx_t-1] if idx_t > 0 else None
+        # 前月: TARGET_YUKYU_DATE より前の最新スナップショット
+        before = [d for d in sorted_dates if d < target_date]
+        prev_date = max(before) if before else None
 
         f_cur = d_map.get(target_date, {})
         f_prev = d_map.get(prev_date, {}) if prev_date else {}
