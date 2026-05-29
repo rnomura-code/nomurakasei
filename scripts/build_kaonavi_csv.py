@@ -1,16 +1,7 @@
 #!/usr/bin/env python3
 """カオナビ労務 給与明細CSV 統合ビルダー（月次運用）。
-
-入力:
-  - 給与明細送付先メール一覧
-  - 従業員マスタ
-  - 月次給与計算CSV（支給/控除/勤怠）正社員＋パート
-  - 通勤手当/お弁当代/社会保険のIMPORT用CSV
-  - パート時給一覧
-  - 銀行口座PDF
-  - 有給休暇管理xlsx（事業所別）
-"""
-import csv, re, codecs, subprocess
+2026/04前任者の user_data_*.csv フォーマット（87列、TSV、QUOTE_ALL）に準拠。"""
+import csv, re, subprocess
 from pathlib import Path
 import openpyxl
 
@@ -25,19 +16,44 @@ P_KOJO = DL / "202605_給与計算(パート・アルバイト)  - 【控除】�
 P_KINTAI = DL / "202605_給与計算(パート・アルバイト)  - 【勤怠】パート社員・アルバイト社員.csv"
 PART_HOURLY = DL / "給与管理一覧_202509～ - 給与一覧(パート) (1).csv"
 YUKYU_FILES = [
-    # 各事業所の master "有給休暇管理" シートを優先（O002大阪も含まれる）
     (DL / "Iwatsuki・Osaka_有給休暇管理.xlsx", "有給休暇管理"),
     (DL / "Tochigi_有給休暇管理.xlsx", "有給休暇管理"),
     (DL / "Gunma_有給休暇管理 (1).xlsx", "有給休暇管理"),
 ]
-TEMPLATE = DL / "records-csv-sample-1756283139772 のコピー - records-csv-sample-1756283139772.csv"
 BANK_PDF = DL / "SSK101-01_20250822162247.pdf"
-OUT = DL / "カオナビ労務_給与明細_202605.csv"
+OUT = DL / "user_data_202605.csv"
 
 EXCLUDE_NAMES = {("野村","富士子"),("大嶋","祐二"),("山岸","孝至"),
                  ("阿久澤","通子"),("川上","千香子"),("渡邉","勇斗"),
                  ("千森","直之"),("鈴木","英信")}
 EXTRA_ADD = [("小山","英尚","I045"), ("原口","愛実","I047")]
+
+COMPANY = "株式会社ノムラ化成"
+PAY_GROUP = "従業員"
+BIKO_DEFAULT = ""  # 共通備考があればここに
+
+# 87列 ヘッダー（前任者サンプル準拠）
+HEADERS = [
+    "姓","名","姓（ヨミガナ）","名（ヨミガナ）","メールアドレス","電話番号",
+    "住所（郵便番号）","住所（都道府県）","住所（市区町村）","住所（丁目・番地）","住所（建物名・部屋番号）",
+    "生年月日","社員コード","事業所","雇用形態","給与形態","締め日・支払い日",
+    "銀行名","支店名","預金種別","口座番号","名義（カタカナ）",
+    "総支給額","控除合計","差引支給額",
+    "日給","勤務日数","基本給","時給","勤務時間","ベース給","役員報酬","勤怠控除合計",
+    "所定労働日数","出勤日数","有休取得日数","有休残日数",
+    "欠勤日数","欠勤控除","遅刻早退回数","遅刻早退時間","遅刻早退控除",
+    "特別休暇日数","特別休暇時間",
+    "残業手当合計","法定時間内残業","法定時間内残業手当","法定時間外残業","法定時間外残業手当",
+    "法定休日労働時間","法定休日労働手当","深夜労働時間","深夜労働手当",
+    "法定時間外割増","法定時間外割増手当","時間外労働60時間超過分","時間外労働60時間超過分手当",
+    "手当合計","役職手当","資格手当","交通費","その他合計（支給）","立替精算",
+    "社会保険料合計","健康保険料","介護保険料","厚生年金保険料","雇用保険料","子ども・子育て支援金",
+    "税金合計","所得税","住民税",
+    "その他合計（控除）","備考",
+    "職務手当","住宅手当","扶養手当","皆勤手当","営業手当","特別手当","在宅勤務手当","休日手当",
+    "お弁当代","その他控除",
+    "有給休暇消化時間数","有給休暇残時間","年末調整額",
+]
 
 def num(s):
     if s is None: return ""
@@ -83,19 +99,18 @@ for r in rows[2:]:
     if not r or not r[0].strip(): continue
     hourly[r[0].strip()] = dict(zip(header_h, r))
 
-# 有休残（集計xlsxシートから）
-yukyu = {}  # sid -> (残日数, 残時間)
+# 有休（残日数/残時間）
+yukyu = {}
 def parse_zantime(v):
-    """残時間: 数値(時間) or 'HH:MM:SS' or datetime.time → 時間(float)文字列"""
     if v is None: return ""
-    if hasattr(v, "hour"):  # datetime.time
+    if hasattr(v, "hour"):
         h = v.hour + v.minute/60 + v.second/3600
         return str(int(h)) if h == int(h) else f"{h:.2f}".rstrip("0").rstrip(".")
     s = str(v).strip()
     if not s: return ""
     if ":" in s:
-        parts = s.split(":")
         try:
+            parts = s.split(":")
             h = int(parts[0]) + int(parts[1])/60
             return str(int(h)) if h == int(h) else f"{h:.2f}".rstrip("0").rstrip(".")
         except: return s
@@ -105,16 +120,13 @@ for path, sheet in YUKYU_FILES:
     wb = openpyxl.load_workbook(path, data_only=True)
     if sheet not in wb.sheetnames: continue
     ws = wb[sheet]
-    # ヘッダー行を探す（"社員ID"を含む行）
-    header_row = None
-    header_idx = {}
+    header_row, header_idx = None, {}
     for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
         if row and any(c == "社員ID" for c in row):
             header_row = i
             for j, c in enumerate(row):
                 if c is None: continue
                 key = str(c).strip()
-                # 同名カラム（残日数/残時間）は最初の出現を採用
                 if key and key not in header_idx:
                     header_idx[key] = j
             break
@@ -129,30 +141,22 @@ for path, sheet in YUKYU_FILES:
         if not sid: continue
         zan_day = row[day_col] if len(row) > day_col else None
         zan_hour = row[hour_col] if hour_col is not None and len(row) > hour_col else None
-        # 既に登録済みなら、値があるものを優先
-        if sid in yukyu and yukyu[sid][0]:
-            continue
+        if sid in yukyu and yukyu[sid][0]: continue
         yukyu[sid] = (num(zan_day), parse_zantime(zan_hour))
 
-# 銀行PDF パース
+# 銀行PDF
 bank_text = subprocess.check_output(
     ["python3","-c",
      "from pypdf import PdfReader\nr=PdfReader(r'''"+str(BANK_PDF)+"''')\nprint('\\n'.join(p.extract_text() for p in r.pages))"]
 ).decode()
 
 HW2FW = str.maketrans({
-    "ｱ":"ア","ｲ":"イ","ｳ":"ウ","ｴ":"エ","ｵ":"オ",
-    "ｶ":"カ","ｷ":"キ","ｸ":"ク","ｹ":"ケ","ｺ":"コ",
-    "ｻ":"サ","ｼ":"シ","ｽ":"ス","ｾ":"セ","ｿ":"ソ",
-    "ﾀ":"タ","ﾁ":"チ","ﾂ":"ツ","ﾃ":"テ","ﾄ":"ト",
-    "ﾅ":"ナ","ﾆ":"ニ","ﾇ":"ヌ","ﾈ":"ネ","ﾉ":"ノ",
-    "ﾊ":"ハ","ﾋ":"ヒ","ﾌ":"フ","ﾍ":"ヘ","ﾎ":"ホ",
-    "ﾏ":"マ","ﾐ":"ミ","ﾑ":"ム","ﾒ":"メ","ﾓ":"モ",
-    "ﾔ":"ヤ","ﾕ":"ユ","ﾖ":"ヨ",
-    "ﾗ":"ラ","ﾘ":"リ","ﾙ":"ル","ﾚ":"レ","ﾛ":"ロ",
-    "ﾜ":"ワ","ｦ":"ヲ","ﾝ":"ン","ｯ":"ッ",
-    "ｬ":"ャ","ｭ":"ュ","ｮ":"ョ",
-    "ｰ":"ー","ﾞ":"゛","ﾟ":"゜",
+    "ｱ":"ア","ｲ":"イ","ｳ":"ウ","ｴ":"エ","ｵ":"オ","ｶ":"カ","ｷ":"キ","ｸ":"ク","ｹ":"ケ","ｺ":"コ",
+    "ｻ":"サ","ｼ":"シ","ｽ":"ス","ｾ":"セ","ｿ":"ソ","ﾀ":"タ","ﾁ":"チ","ﾂ":"ツ","ﾃ":"テ","ﾄ":"ト",
+    "ﾅ":"ナ","ﾆ":"ニ","ﾇ":"ヌ","ﾈ":"ネ","ﾉ":"ノ","ﾊ":"ハ","ﾋ":"ヒ","ﾌ":"フ","ﾍ":"ヘ","ﾎ":"ホ",
+    "ﾏ":"マ","ﾐ":"ミ","ﾑ":"ム","ﾒ":"メ","ﾓ":"モ","ﾔ":"ヤ","ﾕ":"ユ","ﾖ":"ヨ",
+    "ﾗ":"ラ","ﾘ":"リ","ﾙ":"ル","ﾚ":"レ","ﾛ":"ロ","ﾜ":"ワ","ｦ":"ヲ","ﾝ":"ン","ｯ":"ッ",
+    "ｬ":"ャ","ｭ":"ュ","ｮ":"ョ","ｰ":"ー","ﾞ":"゛","ﾟ":"゜",
 })
 def hw_compose(s):
     out = []
@@ -216,11 +220,12 @@ def find_bank(furi_master, sei="", mei=""):
             return v
     return None
 
-def fmt_birth(s):
+def fmt_birth_iso(s):
+    """YYYY-MM-DD"""
     s = (s or "").strip()
     if not s: return ""
     m = re.match(r"(\d{4})[/年-](\d{1,2})[/月-](\d{1,2})", s)
-    return f"{int(m.group(1))}年{int(m.group(2))}月{int(m.group(3))}日" if m else s
+    return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-{int(m.group(3)):02d}" if m else s
 
 def split_furi(s):
     s = (s or "").strip()
@@ -251,9 +256,6 @@ for sid, row in master.items():
         name_to_sid[(parts[0], parts[1])] = sid
         name_to_sid[(parts[1], parts[0])] = sid
 
-with open(TEMPLATE, encoding="utf-8-sig") as f:
-    header = next(csv.reader(f))
-
 def build_row(sei, mei, email, sid_override=""):
     sid = sid_override or name_to_sid.get((sei, mei), "")
     m = master.get(sid, {})
@@ -279,7 +281,6 @@ def build_row(sei, mei, email, sid_override=""):
     pref, city, banchi, bldg = split_addr(m.get("住所", ""))
     bank = find_bank(m.get("ﾌﾘｶﾞﾅ", ""), sei, mei) or {}
 
-    kosei = add(kojo.get("厚生年金保険"), kojo.get("子ども・子育て支援金"))
     kotsu = add(shikyu.get("非課税通勤手当"), shikyu.get("課税通勤手当"))
     zeikin = add(kojo.get("所得税"), kojo.get("住民税"))
     sonota_kojo = add(kojo.get("その他控除"), kojo.get("お弁当代"))
@@ -291,81 +292,76 @@ def build_row(sei, mei, email, sid_override=""):
     if is_part and sid in hourly:
         jikyu = num(hourly[sid].get("基本給",""))
 
-    # 有給残
     zan_day, zan_hour = yukyu.get(sid, ("", ""))
-    biko = ""
-    if zan_hour and zan_hour not in ("0","0.0"):
-        biko = f"時間有給残: {zan_hour}時間"
 
-    out = {
+    out = {h: "" for h in HEADERS}
+    out.update({
         "姓": sei, "名": mei,
-        "姓（ヨミガナ）": fsei, "名（ヨミガナ）": fmei,
+        "姓（ヨミガナ）": m.get("ﾌﾘｶﾞﾅ", "").split()[0] if m.get("ﾌﾘｶﾞﾅ") else "",
+        "名（ヨミガナ）": m.get("ﾌﾘｶﾞﾅ", "").split()[1] if m.get("ﾌﾘｶﾞﾅ") and len(m.get("ﾌﾘｶﾞﾅ").split())>=2 else "",
         "メールアドレス": email,
         "電話番号": (m.get("電話番号") or "").strip(),
         "住所（郵便番号）": (m.get("郵便番号") or "").strip(),
         "住所（都道府県）": pref, "住所（市区町村）": city,
         "住所（丁目・番地）": banchi, "住所（建物名・部屋番号）": bldg,
-        "生年月日": fmt_birth(m.get("生年月日")),
+        "生年月日": fmt_birth_iso(m.get("生年月日")),
         "社員コード": sid,
-        "事業所": "", "雇用形態": koyou, "給与形態": keitai,
-        "締め日・支払い日": "",
+        "事業所": COMPANY,
+        "雇用形態": koyou, "給与形態": keitai,
+        "締め日・支払い日": PAY_GROUP,
         "銀行名": bank.get("銀行名",""), "支店名": bank.get("支店名",""),
         "預金種別": bank.get("預金種別",""), "口座番号": bank.get("口座番号",""),
         "名義（カタカナ）": bank.get("名義（カタカナ）",""),
         "総支給額": num(shikyu.get("総支給額")),
         "控除合計": num(kojo.get("控除合計")),
         "差引支給額": num(shikyu.get("差引支給額")),
-        "日給": "", "勤務日数": num(kintai.get("出勤日数")),
         "基本給": num(shikyu.get("基本給")) if not is_part else "",
         "時給": jikyu, "勤務時間": num(kintai.get("給与計算時間")),
-        "ベース給": "", "役員報酬": "", "勤怠控除合計": "",
+        "勤務日数": num(kintai.get("出勤日数")),
         "所定労働日数": num(kintai.get("要出勤日数")),
         "出勤日数": num(kintai.get("出勤日数")),
         "有休取得日数": num(kintai.get("有給休暇利用日数")),
         "有休残日数": zan_day,
         "欠勤日数": num(kintai.get("欠勤日数")),
-        "欠勤控除": "",
         "遅刻早退回数": chikoku_kaisu,
         "遅刻早退時間": chikoku_jikan,
-        "遅刻早退控除": "",
         "特別休暇日数": tokubetsu_nichi,
         "特別休暇時間": num(kintai.get("特別休暇時間換算")),
         "残業手当合計": num(shikyu.get("時間外手当計")),
-        "法定時間内残業": "", "法定時間内残業手当": "",
         "法定時間外残業": num(kintai.get("時間外労働")),
         "法定時間外残業手当": num(shikyu.get("時間外手当")),
-        "法定休日労働時間": "", "法定休日労働手当": num(shikyu.get("休日手当")),
+        "法定休日労働手当": num(shikyu.get("休日手当")),
         "深夜労働時間": num(kintai.get("深夜時間外労働")),
         "深夜労働手当": num(shikyu.get("深夜時間外手当")),
-        "法定時間外割増": "", "法定時間外割増手当": "",
-        "時間外労働60時間超過分": "", "時間外労働60時間超過分手当": "",
         "手当合計": num(shikyu.get("手当合計")),
         "役職手当": num(shikyu.get("役職手当")),
         "資格手当": num(shikyu.get("資格手当")),
         "交通費": kotsu,
-        "その他合計（支給）": "", "立替精算": "",
         "社会保険料合計": num(kojo.get("社会保険料合計")),
         "健康保険料": num(kojo.get("健康保険")),
         "介護保険料": num(kojo.get("介護保険")),
-        "厚生年金保険料": kosei,
+        "厚生年金保険料": num(kojo.get("厚生年金保険")),
         "雇用保険料": num(kojo.get("雇用保険")),
+        "子ども・子育て支援金": num(kojo.get("子ども・子育て支援金")),
         "税金合計": zeikin,
         "所得税": num(kojo.get("所得税")),
         "住民税": num(kojo.get("住民税")),
         "その他合計（控除）": sonota_kojo,
-        "備考": biko,
+        "備考": BIKO_DEFAULT,
+        "職務手当": num(shikyu.get("職務手当")),
         "住宅手当": num(shikyu.get("住宅手当")),
         "扶養手当": num(shikyu.get("扶養手当")),
-        "職務手当": num(shikyu.get("職務手当")),
         "皆勤手当": num(shikyu.get("皆勤手当")),
         "営業手当": num(shikyu.get("営業手当")),
-        "技術手当": "",
+        "特別手当": num(shikyu.get("特別手当")),
         "在宅勤務手当": num(shikyu.get("在宅勤務手当")),
         "休日手当": num(shikyu.get("休日手当")),
-        "休日時間外手当": num(shikyu.get("休日時間外手当")),
-        "深夜時間外手当": num(shikyu.get("深夜時間外手当")),
         "お弁当代": num(kojo.get("お弁当代")),
-    }
+        "その他控除": num(kojo.get("その他控除")),
+        "有給休暇消化時間数": num(kintai.get("有給休暇利用時間")),
+        "有給休暇残時間": zan_hour,
+        "年末調整額": "",
+    })
     if sid in ("I001","I002"):
         out["役員報酬"] = num(shikyu.get("基本給"))
         out["基本給"] = ""
@@ -383,19 +379,20 @@ for sei, mei, sid in EXTRA_ADD:
     email = (m.get("メールアドレス") or "").strip()
     rows.append(build_row(sei, mei, email, sid_override=sid))
 
-with open(OUT, "w", encoding="utf-8-sig", newline="") as f:
-    w = csv.DictWriter(f, fieldnames=header)
-    w.writeheader()
-    for row in rows:
-        w.writerow({k: row.get(k,"") for k in header})
+# TSV出力（全項目クォート、UTF-8、LF）
+with open(OUT, "w", encoding="utf-8", newline="") as f:
+    w = csv.writer(f, delimiter="\t", quoting=csv.QUOTE_ALL, lineterminator="\n")
+    w.writerow(HEADERS)
+    for r in rows:
+        w.writerow([r.get(h,"") for h in HEADERS])
 
 no_bank = [r for r in rows if not r["銀行名"]]
 no_yukyu = [r for r in rows if not r["有休残日数"]]
-with_hour = [r for r in rows if r["備考"]]
+with_hour = [r for r in rows if r["有給休暇残時間"]]
 print(f"出力: {OUT}")
-print(f"行数: {len(rows)}")
-print(f"\n有休残日数なし: {len(no_yukyu)}名 ({[r['社員コード'] for r in no_yukyu]})")
-print(f"時間有給残あり (備考に記載): {len(with_hour)}名")
+print(f"行数: {len(rows)} / 列数: {len(HEADERS)}")
+print(f"\n有給残時間あり: {len(with_hour)}名")
 for r in with_hour:
-    print(f"  - {r['姓']} {r['名']} ({r['社員コード']}): {r['備考']}")
-print(f"\n銀行情報なし: {len(no_bank)}名 ({[r['社員コード'] for r in no_bank]})")
+    print(f"  - {r['姓']} {r['名']} ({r['社員コード']}): {r['有給休暇残時間']}時間")
+print(f"\n有休残日数なし: {len(no_yukyu)}名 ({[r['社員コード'] for r in no_yukyu]})")
+print(f"銀行情報なし: {len(no_bank)}名 ({[r['社員コード'] for r in no_bank]})")
