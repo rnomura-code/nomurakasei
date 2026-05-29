@@ -233,6 +233,22 @@ for path, sheet in YUKYU_FILES:
             "expire": cur_exp,
         }
 
+# 前月カオナビCSV（残日数/残時間の起点）
+prev_kao = {}
+if PREV_KAONAVI_CSV.exists():
+    with open(PREV_KAONAVI_CSV, encoding="utf-8-sig") as f:
+        rdr = csv.reader(f, delimiter="\t")
+        hdr_p = next(rdr)
+        idx_p = {h:i for i,h in enumerate(hdr_p)}
+        for row in rdr:
+            if not row or not any(row): continue
+            sid = row[idx_p["社員コード"]].strip() if "社員コード" in idx_p else ""
+            if not sid: continue
+            prev_kao[sid] = {
+                "残日数": row[idx_p.get("有休残日数", -1)].strip() if "有休残日数" in idx_p else "",
+                "残時間": row[idx_p.get("有給休暇残時間", -1)].strip() if "有給休暇残時間" in idx_p else "",
+            }
+
 # 銀行PDF
 bank_text = subprocess.check_output(
     ["python3","-c",
