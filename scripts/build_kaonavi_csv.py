@@ -16,9 +16,11 @@ P_KOJO = DL / "202605_給与計算(パート・アルバイト)  - 【控除】�
 P_KINTAI = DL / "202605_給与計算(パート・アルバイト)  - 【勤怠】パート社員・アルバイト社員.csv"
 PART_HOURLY = DL / "給与管理一覧_202509～ - 給与一覧(パート) (1).csv"
 YUKYU_FILES = [
-    (DL / "Iwatsuki・Osaka_有給休暇管理.xlsx", "有給休暇管理"),
-    (DL / "Tochigi_有給休暇管理.xlsx", "有給休暇管理"),
-    (DL / "Gunma_有給休暇管理 (1).xlsx", "有給休暇管理"),
+    # 各事業所の 集計 シートは月次スナップショットを持つ。最新月の 残日数/残時間 を採用する。
+    (DL / "Iwatsuki・Osaka_有給休暇管理.xlsx", "Iwatsuki_集計"),
+    (DL / "Iwatsuki・Osaka_有給休暇管理.xlsx", "Osaka_集計"),
+    (DL / "Tochigi_有給休暇管理.xlsx", "Tochigi_集計"),
+    (DL / "Gunma_有給休暇管理 (1).xlsx", "Gunma_集計"),
 ]
 BANK_PDF = DL / "SSK101-01_20250822162247.pdf"
 OUT = DL / "user_data_202605.csv"
