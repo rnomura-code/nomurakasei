@@ -33,6 +33,9 @@ EXTRA_ADD = [("小山","英尚","I045"), ("原口","愛実","I047")]
 COMPANY = "株式会社ノムラ化成"
 PAY_GROUP = "従業員"
 BIKO_DEFAULT = ""  # 共通備考があればここに
+# 対象給与月（有給集計シートの月次スナップショット列に対応する日付）
+import datetime as _dt
+TARGET_YUKYU_DATE = _dt.datetime(2026, 5, 1)
 
 # 87列 ヘッダー（前任者サンプル準拠）
 HEADERS = [
