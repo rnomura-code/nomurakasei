@@ -397,7 +397,33 @@ def build_row(sei, mei, email, sid_override=""):
     if is_part and sid in hourly:
         jikyu = num(hourly[sid].get("基本給",""))
 
-    zan_day, zan_hour = yukyu.get(sid, ("", ""))
+    # 有給残計算: 前月カオナビ残 + 当月付与 - 当月利用 - 当月失効
+    yk = yukyu.get(sid, {})
+    cur_use_d = float(kintai.get("有給休暇利用日数","").strip() or 0) if kintai else 0.0
+    cur_use_h_raw = (kintai.get("有給休暇利用時間","") or "").strip()
+    try: cur_use_h = float(cur_use_h_raw) if cur_use_h_raw else 0.0
+    except: cur_use_h = 0.0
+    grant = yk.get("grant", 0.0) if isinstance(yk, dict) else 0.0
+    expire = yk.get("expire", 0.0) if isinstance(yk, dict) else 0.0
+    pk = prev_kao.get(sid)
+    if pk and pk["残日数"]:
+        try: prev_d = float(pk["残日数"])
+        except: prev_d = 0.0
+        new_zan_d = prev_d + grant - cur_use_d - expire
+    else:
+        new_zan_d = yk.get("xlsx_fallback_day", 0.0) - cur_use_d if isinstance(yk, dict) else 0.0
+    if pk and pk["残時間"]:
+        try: prev_h = float(pk["残時間"])
+        except: prev_h = 0.0
+        new_zan_h = max(0.0, prev_h - cur_use_h)
+    else:
+        new_zan_h = max(0.0, (yk.get("xlsx_fallback_hour", 0.0) if isinstance(yk, dict) else 0.0) - cur_use_h)
+
+    def _fmt(v):
+        if v == int(v): return str(int(v))
+        return f"{v:.2f}".rstrip("0").rstrip(".")
+    zan_day = _fmt(new_zan_d)
+    zan_hour = _fmt(new_zan_h)
 
     out = {h: "" for h in HEADERS}
     out.update({
