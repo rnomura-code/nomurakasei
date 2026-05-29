@@ -122,28 +122,47 @@ for path, sheet in YUKYU_FILES:
     wb = openpyxl.load_workbook(path, data_only=True)
     if sheet not in wb.sheetnames: continue
     ws = wb[sheet]
-    header_row, header_idx = None, {}
+    # 集計シートの構造: 1行目=列番号 or 空, 2行目=日付スナップショット, 3行目=ヘッダー("社員ID","残日数",...), 4行目〜=データ
+    # Osaka_集計のみ: 1行目=日付, 2行目=ヘッダー, 3行目〜=データ
+    header_row = None
+    date_row = None
     for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
         if row and any(c == "社員ID" for c in row):
             header_row = i
-            for j, c in enumerate(row):
-                if c is None: continue
-                key = str(c).strip()
-                if key and key not in header_idx:
-                    header_idx[key] = j
+            if i >= 2:
+                date_row = list(next(ws.iter_rows(min_row=i-1, max_row=i-1, values_only=True)))
             break
     if not header_row: continue
-    id_col = header_idx.get("社員ID", 0)
-    day_col = header_idx.get("残日数")
-    hour_col = header_idx.get("残時間")
+    hdr = list(next(ws.iter_rows(min_row=header_row, max_row=header_row, values_only=True)))
+    # 全 残日数/残時間 列を日付付きで列挙
+    day_cols = []  # (col_idx, date)
+    hour_cols = []
+    for j, h in enumerate(hdr):
+        if h == "残日数":
+            d = date_row[j] if date_row and j < len(date_row) else None
+            day_cols.append((j, d))
+        elif h == "残時間":
+            d = date_row[j] if date_row and j < len(date_row) else None
+            hour_cols.append((j, d))
+    # 最新の日付の列を選ぶ（日付Noneは最後に）
+    def latest_col(cols):
+        if not cols: return None
+        dated = [c for c in cols if c[1] is not None]
+        if dated:
+            return max(dated, key=lambda x: x[1])[0]
+        return cols[-1][0]
+    day_col = latest_col(day_cols)
+    hour_col = latest_col(hour_cols)
     if day_col is None: continue
+    id_col = hdr.index("社員ID")
     for row in ws.iter_rows(min_row=header_row+1, values_only=True):
         if not row or row[id_col] is None: continue
         sid = str(row[id_col]).strip()
         if not sid: continue
         zan_day = row[day_col] if len(row) > day_col else None
         zan_hour = row[hour_col] if hour_col is not None and len(row) > hour_col else None
-        if sid in yukyu and yukyu[sid][0]: continue
+        # 既に値があればスキップ（事業所別の集計シートで重複した場合は最初のものを採用）
+        if sid in yukyu and yukyu[sid][0] not in (None, ""): continue
         yukyu[sid] = (num(zan_day), parse_zantime(zan_hour))
 
 # 銀行PDF
