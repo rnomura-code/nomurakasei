@@ -210,30 +210,28 @@ for path, sheet in YUKYU_FILES:
         f_cur = d_map.get(target_date, {})
         f_prev = d_map.get(prev_date, {}) if prev_date else {}
 
-        # 計算: 新残日数 = 前月残日数 + 当月付与 - 当月利用 - 当月失効
-        prev_zan_day = to_float(f_prev.get("残日数"))
-        prev_zan_hour = to_float(f_prev.get("残時間"))
+        # 当月の付与・失効のみ xlsx から（利用は後で勤怠CSVから取り直す）
         cur_grant = to_float(f_cur.get("付与日数"))
-        cur_use_d = to_float(f_cur.get("利用日数"))
-        cur_use_h = to_float(f_cur.get("利用時間"))
         cur_exp = to_float(f_cur.get("失効日数"))
-
-        # 前月残日数がない場合は当月の残日数を信用（fallback）
+        # 前月残はとりあえず xlsx から（後でカオナビ前月CSVで上書き）
+        prev_zan_day_xlsx = to_float(f_prev.get("残日数")) if prev_date else 0.0
+        prev_zan_hour_xlsx = to_float(f_prev.get("残時間")) if prev_date else 0.0
+        # fallback値（カオナビ前月CSVに無い社員用）
         if f_prev.get("残日数") is None and f_cur.get("残日数") is not None:
-            new_day = to_float(f_cur.get("残日数"))
+            fallback_day = to_float(f_cur.get("残日数"))
         else:
-            new_day = prev_zan_day + cur_grant - cur_use_d - cur_exp
-
-        # 残時間: 前月残時間 - 当月利用時間（マイナスなら0でclamp）
+            fallback_day = prev_zan_day_xlsx + cur_grant - cur_exp  # 利用は後で引く
         if f_prev.get("残時間") is None and f_cur.get("残時間") is not None:
-            new_hour = to_float(f_cur.get("残時間"))
+            fallback_hour = to_float(f_cur.get("残時間"))
         else:
-            new_hour = max(0.0, prev_zan_hour - cur_use_h)
-
-        def fmt(v):
-            if v == int(v): return str(int(v))
-            return f"{v:.2f}".rstrip("0").rstrip(".")
-        yukyu[sid] = (fmt(new_day), fmt(new_hour))
+            fallback_hour = prev_zan_hour_xlsx
+        # xlsx_yukyu_calc に保管（後で結合）
+        yukyu[sid] = {
+            "xlsx_fallback_day": fallback_day,
+            "xlsx_fallback_hour": fallback_hour,
+            "grant": cur_grant,
+            "expire": cur_exp,
+        }
 
 # 銀行PDF
 bank_text = subprocess.check_output(
