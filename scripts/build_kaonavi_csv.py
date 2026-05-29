@@ -192,7 +192,7 @@ for path, sheet in YUKYU_FILES:
 
     # 各社員の「最新の有効期間」を判定（残日数 or 付与/利用/利用時間/失効 のどれかに値がある最新月）
     for sid, d_map in sid_data.items():
-        if sid in yukyu and yukyu[sid][0] not in (None, ""):
+        if sid in yukyu:
             continue  # 既に他シートから取得済み
 
         # TARGET_YUKYU_DATE と一致する日付を対象とする（なければそれ以前で最新）
