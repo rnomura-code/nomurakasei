@@ -105,14 +105,33 @@ for path, sheet in YUKYU_FILES:
     wb = openpyxl.load_workbook(path, data_only=True)
     if sheet not in wb.sheetnames: continue
     ws = wb[sheet]
-    # ヘッダー行: 3行目 (社員ID,氏名,..,残日数,残時間)
-    for row in ws.iter_rows(min_row=4, values_only=True):
-        sid = row[0]
+    # ヘッダー行を探す（"社員ID"を含む行）
+    header_row = None
+    header_idx = {}
+    for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
+        if row and any(c == "社員ID" for c in row):
+            header_row = i
+            for j, c in enumerate(row):
+                if c is None: continue
+                key = str(c).strip()
+                # 同名カラム（残日数/残時間）は最初の出現を採用
+                if key and key not in header_idx:
+                    header_idx[key] = j
+            break
+    if not header_row: continue
+    id_col = header_idx.get("社員ID", 0)
+    day_col = header_idx.get("残日数")
+    hour_col = header_idx.get("残時間")
+    if day_col is None: continue
+    for row in ws.iter_rows(min_row=header_row+1, values_only=True):
+        if not row or row[id_col] is None: continue
+        sid = str(row[id_col]).strip()
         if not sid: continue
-        sid = str(sid).strip()
-        if not sid: continue
-        zan_day = row[13] if len(row) > 13 else None
-        zan_hour = row[14] if len(row) > 14 else None
+        zan_day = row[day_col] if len(row) > day_col else None
+        zan_hour = row[hour_col] if hour_col is not None and len(row) > hour_col else None
+        # 既に登録済みなら、値があるものを優先
+        if sid in yukyu and yukyu[sid][0]:
+            continue
         yukyu[sid] = (num(zan_day), parse_zantime(zan_hour))
 
 # 銀行PDF パース
