@@ -118,12 +118,28 @@ def parse_zantime(v):
         except: return s
     return num(s)
 
+def to_float(v):
+    if v is None: return 0.0
+    if hasattr(v, "hour"):  # datetime.time
+        return v.hour + v.minute/60 + v.second/3600
+    s = str(v).strip().replace(",","")
+    if not s: return 0.0
+    neg = s.startswith("▲") or s.startswith("-")
+    s = s.lstrip("▲-")
+    if ":" in s:
+        try:
+            p = s.split(":")
+            return (int(p[0]) + int(p[1])/60) * (-1 if neg else 1)
+        except: return 0.0
+    try:
+        return float(s) * (-1 if neg else 1)
+    except: return 0.0
+
 for path, sheet in YUKYU_FILES:
     wb = openpyxl.load_workbook(path, data_only=True)
     if sheet not in wb.sheetnames: continue
     ws = wb[sheet]
-    # 集計シートの構造: 日付行 + ヘッダ行 + データ行。
-    # ヘッダ行を探す
+    # ヘッダ行と日付行を探す
     header_row = None
     date_row_vals = None
     for i, row in enumerate(ws.iter_rows(min_row=1, max_row=10, values_only=True), 1):
@@ -136,42 +152,85 @@ for path, sheet in YUKYU_FILES:
     hdr = list(next(ws.iter_rows(min_row=header_row, max_row=header_row, values_only=True)))
     id_col = hdr.index("社員ID")
 
-    # 月次スナップショットは [付与日数, 利用日数, 利用時間, (失効日数), 残日数, 残時間] の繰り返し。
-    # 残日数列を全て列挙（#REF!破損ヘッダも、直前列のヘッダから推定）
-    day_cols = []  # 列インデックス（残日数）
-    hour_cols_map = {}  # day_col → hour_col
+    # 日付→{付与日数, 利用日数, 利用時間, 失効日数, 残日数, 残時間} の列マップを構築
+    period_cols = {}  # date → {field: col_idx}
     for j, h in enumerate(hdr):
-        if h == "残日数":
-            day_cols.append(j)
-            # 残時間はその次の列のはず
+        d = date_row_vals[j] if date_row_vals and j < len(date_row_vals) else None
+        if d is None: continue
+        rec = period_cols.setdefault(d, {})
+        if h in ("付与日数","利用日数","利用時間","失効日数","残日数","残時間"):
+            rec[h] = j
+        elif h == "#REF!" and "残日数" not in rec:
+            # Osaka_集計の壊れた残日数列
+            rec["残日数"] = j
+            # 直後が残時間ならペア
             if j+1 < len(hdr) and hdr[j+1] == "残時間":
-                hour_cols_map[j] = j+1
-        elif h == "残時間":
-            # 直前列が「残日数」でなく#REF!の場合に拾う
-            if j-1 >= 0 and hdr[j-1] not in ("残日数",) and (j-1) not in day_cols:
-                # 列j-1を残日数とみなす（Osaka_集計の#REF!パターン）
-                day_cols.append(j-1)
-                hour_cols_map[j-1] = j
-    # 日付付きで右側（新しい）から並べる
-    day_cols_sorted = sorted(set(day_cols), reverse=True)
+                rec["残時間"] = j+1
 
+    sorted_dates = sorted(period_cols.keys())
+    if not sorted_dates: continue
+
+    # データ行を社員ID→{date→{field:value}} に展開
+    sid_data = {}
     for row in ws.iter_rows(min_row=header_row+1, values_only=True):
         if not row or len(row) <= id_col or row[id_col] is None: continue
         sid = str(row[id_col]).strip()
         if not sid: continue
-        if sid in yukyu and yukyu[sid][0] not in (None, ""): continue
-        # この社員の最右側で値がある残日数列を探す
-        zan_day = None
-        zan_hour = None
-        for dc in day_cols_sorted:
-            v = row[dc] if dc < len(row) else None
-            if v is not None and str(v).strip() != "":
-                zan_day = v
-                hc = hour_cols_map.get(dc)
-                if hc is not None and hc < len(row):
-                    zan_hour = row[hc]
+        d_map = {}
+        for d, fields in period_cols.items():
+            f_map = {}
+            for fname, col in fields.items():
+                v = row[col] if col < len(row) else None
+                f_map[fname] = v
+            d_map[d] = f_map
+        sid_data[sid] = d_map
+
+    # 各社員の「最新の有効期間」を判定（残日数 or 付与/利用/利用時間/失効 のどれかに値がある最新月）
+    for sid, d_map in sid_data.items():
+        if sid in yukyu and yukyu[sid][0] not in (None, ""):
+            continue  # 既に他シートから取得済み
+
+        # 最新の有効スナップショット日付を探す
+        target_date = None
+        for d in reversed(sorted_dates):
+            f = d_map.get(d, {})
+            has_any = any(f.get(k) is not None for k in ("付与日数","利用日数","利用時間","失効日数","残日数","残時間"))
+            if has_any:
+                target_date = d
                 break
-        yukyu[sid] = (num(zan_day), parse_zantime(zan_hour))
+        if target_date is None: continue
+
+        # 1つ前のスナップショットを前月とする
+        idx_t = sorted_dates.index(target_date)
+        prev_date = sorted_dates[idx_t-1] if idx_t > 0 else None
+
+        f_cur = d_map.get(target_date, {})
+        f_prev = d_map.get(prev_date, {}) if prev_date else {}
+
+        # 計算: 新残日数 = 前月残日数 + 当月付与 - 当月利用 - 当月失効
+        prev_zan_day = to_float(f_prev.get("残日数"))
+        prev_zan_hour = to_float(f_prev.get("残時間"))
+        cur_grant = to_float(f_cur.get("付与日数"))
+        cur_use_d = to_float(f_cur.get("利用日数"))
+        cur_use_h = to_float(f_cur.get("利用時間"))
+        cur_exp = to_float(f_cur.get("失効日数"))
+
+        # 前月残日数がない場合は当月の残日数を信用（fallback）
+        if f_prev.get("残日数") is None and f_cur.get("残日数") is not None:
+            new_day = to_float(f_cur.get("残日数"))
+        else:
+            new_day = prev_zan_day + cur_grant - cur_use_d - cur_exp
+
+        # 残時間: 前月残時間 - 当月利用時間（マイナスなら0でclamp）
+        if f_prev.get("残時間") is None and f_cur.get("残時間") is not None:
+            new_hour = to_float(f_cur.get("残時間"))
+        else:
+            new_hour = max(0.0, prev_zan_hour - cur_use_h)
+
+        def fmt(v):
+            if v == int(v): return str(int(v))
+            return f"{v:.2f}".rstrip("0").rstrip(".")
+        yukyu[sid] = (fmt(new_day), fmt(new_hour))
 
 # 銀行PDF
 bank_text = subprocess.check_output(
