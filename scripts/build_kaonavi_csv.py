@@ -25,7 +25,20 @@ YUKYU_FILES = [
 BANK_PDF = DL / "SSK101-01_20250822162247.pdf"
 OUT = DL / "user_data_202605.csv"
 # 前月カオナビCSV（残日数/残時間の起点として最も信頼できる）
-PREV_KAONAVI_CSV = DL / "user_data_1780040560622.csv"  # 4月版
+# カオナビ正式エクスポート（cp932コンマ区切り）を優先、なければ tab/utf-8の手動出力版を使う
+PREV_KAONAVI_CSV = DL / "カオナビデータ2026年3月21日-4月20日.csv"
+# 勤怠申請履歴xlsx（5月利用日数/時間の真の集計元）
+KINTAI_REQUEST_FILES = [
+    DL / "Iwatsuki_勤怠申請履歴.xlsx",
+    DL / "Gunma_勤怠申請履歴.xlsx",
+    DL / "Tochigi_勤怠申請履歴.xlsx",
+    DL / "Osaka_勤怠申請履歴.xlsx",
+]
+# 対象期間（給与計算期間）
+import datetime as _dt2
+TARGET_PERIOD_START = _dt2.datetime(2026, 4, 21)
+TARGET_PERIOD_END = _dt2.datetime(2026, 5, 20)
+SUGINO_EMAIL = "k.sugino@nomura-kasei.co.jp"
 
 EXCLUDE_NAMES = {("野村","富士子"),("大嶋","祐二"),("山岸","孝至"),
                  ("阿久澤","通子"),("川上","千香子"),("渡邉","勇斗"),
