@@ -246,21 +246,91 @@ for path, sheet in YUKYU_FILES:
             "expire": cur_exp,
         }
 
-# 前月カオナビCSV（残日数/残時間の起点）
+# 前月カオナビCSV（残日数/残時間の起点）。エンコーディング/区切りを自動判定
 prev_kao = {}
 if PREV_KAONAVI_CSV.exists():
-    with open(PREV_KAONAVI_CSV, encoding="utf-8-sig") as f:
-        rdr = csv.reader(f, delimiter="\t")
-        hdr_p = next(rdr)
-        idx_p = {h:i for i,h in enumerate(hdr_p)}
-        for row in rdr:
-            if not row or not any(row): continue
-            sid = row[idx_p["社員コード"]].strip() if "社員コード" in idx_p else ""
+    raw = PREV_KAONAVI_CSV.read_bytes()
+    # BOM/エンコーディング判定
+    if raw.startswith(b"\xff\xfe") or raw.startswith(b"\xfe\xff"):
+        text = raw.decode("utf-16")
+    else:
+        for enc in ("utf-8-sig","utf-8","cp932"):
+            try: text = raw.decode(enc); break
+            except UnicodeDecodeError: continue
+    # 区切り判定: 1行目に \t が多ければtab、そうでなければカンマ
+    first_line = text.split("\n",1)[0]
+    delim = "\t" if first_line.count("\t") > first_line.count(",") else ","
+    import io
+    rdr = csv.reader(io.StringIO(text), delimiter=delim)
+    hdr_p = next(rdr)
+    idx_p = {h:i for i,h in enumerate(hdr_p)}
+    for row in rdr:
+        if not row or not any(row): continue
+        sid = row[idx_p["社員コード"]].strip() if "社員コード" in idx_p and len(row) > idx_p["社員コード"] else ""
+        if not sid: continue
+        prev_kao[sid] = {
+            "残日数": row[idx_p["有休残日数"]].strip() if "有休残日数" in idx_p else "",
+            "残時間": row[idx_p["有給休暇残時間"]].strip() if "有給休暇残時間" in idx_p else "",
+        }
+
+# 勤怠申請履歴xlsxから有給利用を集計（4/21-5/20分）
+def _is_paid_leave(content):
+    if not content: return False
+    return any(k in str(content) for k in ["年次有給休暇","午前有給休暇","午後有給休暇","時間有給休暇"])
+def _leave_type(content):
+    c = str(content)
+    if "時間有給休暇" in c: return "hour"
+    if "午前有給休暇" in c or "午後有給休暇" in c: return "half"
+    if "年次有給休暇" in c: return "full"
+    return None
+def _to_time(v):
+    if v is None: return None
+    if hasattr(v, "hour"): return v.hour + v.minute/60 + v.second/3600
+    s = str(v).strip()
+    if ":" in s:
+        p = s.split(":")
+        try: return int(p[0]) + int(p[1])/60
+        except: return None
+    try: return float(s)
+    except: return None
+def _is_approved(s1, s2, a1, a2):
+    s1, s2 = (s1 or "").strip(), (s2 or "").strip()
+    a1, a2 = (a1 or "").strip().lower(), (a2 or "").strip().lower()
+    if "却下" in s1 or "却下" in s2: return False
+    if s1 == "承認" and s2 == "承認": return True
+    if SUGINO_EMAIL in a2 and s2 in ("","未承認") and s1 == "承認": return True
+    if SUGINO_EMAIL in a1 and s1 in ("","未承認") and s2 in ("","承認"): return True
+    return False
+
+req_use = {}  # sid -> (利用日数, 利用時間)
+for path in KINTAI_REQUEST_FILES:
+    if not path.exists(): continue
+    wb = openpyxl.load_workbook(path, data_only=True)
+    for sh in wb.sheetnames:
+        ws = wb[sh]
+        hdr = [c.value for c in ws[1]]
+        ix = {h:i for i,h in enumerate(hdr)}
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            if not row: continue
+            content = row[ix.get("申請内容",-1)] if ix.get("申請内容") is not None else None
+            if not _is_paid_leave(content): continue
+            date_val = row[ix["日付"]]
+            if not hasattr(date_val, "year"): continue
+            if not (TARGET_PERIOD_START <= date_val <= TARGET_PERIOD_END): continue
+            if not _is_approved(row[ix.get("承認者1ステータス",-1)], row[ix.get("承認者2ステータス",-1)],
+                                row[ix.get("承認者1メールアドレス",-1)], row[ix.get("承認者2メールアドレス",-1)]):
+                continue
+            sid = (str(row[ix["社員ID"]]) if row[ix["社員ID"]] else "").strip()
             if not sid: continue
-            prev_kao[sid] = {
-                "残日数": row[idx_p.get("有休残日数", -1)].strip() if "有休残日数" in idx_p else "",
-                "残時間": row[idx_p.get("有給休暇残時間", -1)].strip() if "有給休暇残時間" in idx_p else "",
-            }
+            lt = _leave_type(content)
+            dd, hh = 0.0, 0.0
+            if lt == "full": dd = 1.0
+            elif lt == "half": dd = 0.5
+            elif lt == "hour":
+                st, et = _to_time(row[ix.get("開始日時")]), _to_time(row[ix.get("終了日時")])
+                if st is not None and et is not None: hh = max(0, et - st)
+            d, h = req_use.get(sid, (0.0, 0.0))
+            req_use[sid] = (d + dd, h + hh)
 
 # 銀行PDF
 bank_text = subprocess.check_output(
