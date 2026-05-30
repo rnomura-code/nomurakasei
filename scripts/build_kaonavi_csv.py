@@ -538,7 +538,7 @@ def build_row(sei, mei, email, sid_override=""):
         "勤務日数": num(kintai.get("出勤日数")),
         "所定労働日数": num(kintai.get("要出勤日数")),
         "出勤日数": num(kintai.get("出勤日数")),
-        "有休取得日数": num(kintai.get("有給休暇利用日数")),
+        "有休取得日数": _fmt(cur_use_d) if cur_use_d or req_use.get(sid) else num(kintai.get("有給休暇利用日数")),
         "有休残日数": zan_day,
         "欠勤日数": num(kintai.get("欠勤日数")),
         "遅刻早退回数": chikoku_kaisu,
