@@ -570,7 +570,7 @@ def build_row(sei, mei, email, sid_override=""):
         "休日手当": num(shikyu.get("休日手当")),
         "お弁当代": num(kojo.get("お弁当代")),
         "その他控除": num(kojo.get("その他控除")),
-        "有給休暇消化時間数": _fmt(cur_use_h) if cur_use_h or req_use.get(sid) else num(kintai.get("有給休暇利用時間")),
+        "有給休暇消化時間数": _fmt(cur_use_h),
         "有給休暇残時間": zan_hour,
         "年末調整額": "",
     })
