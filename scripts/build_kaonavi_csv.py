@@ -483,7 +483,16 @@ def build_row(sei, mei, email, sid_override=""):
     # 有給残計算: 前月カオナビ残 + 当月付与 - 当月利用 - 当月失効
     yk = yukyu.get(sid, {})
     # 利用日数/時間は申請履歴のみを正とする（無ければ0=利用なし）
-    cur_use_d, cur_use_h = req_use.get(sid, (0.0, 0.0))
+    # 有給消化日数/時間は勤怠CSVの確定値を優先（申請履歴xlsxはfallback）
+    def _to_f(v):
+        try: return float((v or "").strip())
+        except: return 0.0
+    kintai_use_d = _to_f(kintai.get("有給休暇利用日数")) if kintai else 0.0
+    kintai_use_h = _to_f(kintai.get("有給休暇利用時間")) if kintai else 0.0
+    req_d, req_h = req_use.get(sid, (0.0, 0.0))
+    # 勤怠CSVに値があればそちらを採用。無い場合のみ申請履歴を使う
+    cur_use_d = kintai_use_d if kintai_use_d else req_d
+    cur_use_h = kintai_use_h if kintai_use_h else req_h
     grant = yk.get("grant", 0.0) if isinstance(yk, dict) else 0.0
     expire = yk.get("expire", 0.0) if isinstance(yk, dict) else 0.0
     pk = prev_kao.get(sid)
