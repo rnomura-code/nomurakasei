@@ -115,7 +115,9 @@
       "Bash(/Users/ryotanomura/.volta/bin/clasp deployments *)",
       "Bash(python3 \"/Users/ryotanomura/Desktop/Claude Code_Nomura Kasei Website/scripts/build_kaonavi_csv.py\")",
       "Bash(python3 /tmp/verify_yukyu.py)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(osascript -e 'tell application \"TextEdit\" to close every document saving no')",
+      "Bash(open -a TextEdit src/Payroll.gs src/MasterAudit.gs)"
     ]
   }
 }
