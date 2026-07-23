@@ -117,7 +117,11 @@
       "Bash(python3 /tmp/verify_yukyu.py)",
       "WebSearch",
       "Bash(osascript -e 'tell application \"TextEdit\" to close every document saving no')",
-      "Bash(open -a TextEdit src/Payroll.gs src/MasterAudit.gs)"
+      "Bash(open -a TextEdit src/Payroll.gs src/MasterAudit.gs)",
+      "Bash(curl -s \"https://www.nomura-kasei.co.jp/index.html?_=$\\(date +%s\\)\")",
+      "Bash(grep -v \"^\\\\.$\\\\|^\\\\.\\\\.$\\\\|^$\")",
+      "Bash(awk '{print $NF, $5}')",
+      "Bash(grep -v \"^\\\\.\\\\|^$\")"
     ]
   }
 }
